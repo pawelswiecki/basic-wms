@@ -1,8 +1,10 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
+DB_FILENAME = 'database.db'
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DB_FILENAME
 db = SQLAlchemy(app)
 
 class Warehouse(db.Model):
@@ -96,7 +98,7 @@ class Supplier(db.Model):
         return self.__str__()
 
     def __str__(self):
-        return "<Supplier #{}>".format(self._id)
+        return "<Supplier #{}, name: {}>".format(self._id, self._name)
 
     @property
     def VATIN(self):
@@ -186,24 +188,4 @@ class ItemBatch(db.Model):
     
 
 if __name__ == "__main__":
-    db.create_all()    
-
-    s1 = Supplier(VATIN="12345643", name="company1", location="address...")
-    db.session.add(s1)
-
-    s2 = Supplier(VATIN="87654", name="company2", location="address...")
-    db.session.add(s2)
-
-    s3 = Supplier(VATIN="653547634", name="company3", location="address...")
-    db.session.add(s3)
-
-    i1 = ItemType(name="keyboard", model="x15", unit_of_measure="each")
-    db.session.add(i1)
-
-    w1 = Warehouse(name="warehouse1", location="some address ...")
-    db.session.add(w1)
-
-    ib1 = ItemBatch(quantity=100, warehouse=w1, supplier=s3, item_type=i1)
-    db.session.add(ib1)
-
-    db.session.commit()
+    db.create_all()
