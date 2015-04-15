@@ -1,7 +1,9 @@
 import db_model
 
+                                  ############
+                                  #  CREATE  #
+                                  ############
 
-# CREATORS
 def new_warehouse(name, location):
     """ Adds new warehouse to db and returns it."""
     warehouse = db_model.Warehouse(name=name, location=location)
@@ -16,9 +18,9 @@ def new_supplier(VATIN, name, location):
     db_model.db.session.commit()
     return supplier
 
-def new_item_type(name, model, unit_of_measure):
+def new_item_type(name, item_model, unit_of_measure):
     """ Adds new item type to db and returns it."""
-    item_type = db_model.ItemType(name=name, model=model,
+    item_type = db_model.ItemType(name=name, item_model=item_model,
                                   unit_of_measure=unit_of_measure)
     db_model.db.session.add(item_type)
     db_model.db.session.commit()
@@ -33,7 +35,12 @@ def new_item_batch(quantity, warehouse, supplier, item_type):
     return item_batch
 
 
-# INDIVIDUAL GETTERS
+
+                                  ############
+                                  #   READ   #
+                                  ############
+
+# individual getters
 def get_warehouse(id_):
     """
     Returns individual warehouse with given *id* 
@@ -78,13 +85,13 @@ def get_item_batch(id_):
     else:
         return None
 
-
-# GROUP GETTERS
-def get_warehouses():
+# group getters
+def get_warehouses(with_deleted=False):
     """ Yields all warehouses."""
     warehouses = db_model.Warehouse.query.all()
     for warehouse in warehouses:
-        yield warehouse
+        if with_deleted or not warehouse.deleted:
+            yield warehouse
 
 def get_suppliers():
     """ Yields all suppliers."""
@@ -103,3 +110,59 @@ def get_item_batches():
     item_batches = db_model.ItemBatch.query.all()
     for item_batch in item_batches:
         yield item_batch
+
+
+                                  ############
+                                  #  UPDATE  #
+                                  ############
+
+
+
+                                  ############
+                                  #  DELETE  #
+                                  ############
+
+def delete_warehouse(id_):    
+    """
+    Marks warehouse with given *id* as deleted. 
+    Returns True if successful, False if it was already deleted.
+    """
+    warehouse = get_warehouse(id_=id_)
+    if not warehouse.deleted:
+        warehouse.deleted = True
+        db_model.db.session.add(warehouse)
+        db_model.db.session.commit()
+        return True
+    else:
+        return False
+
+def undelete_warehouse(id_):
+    """
+    Marks warehouse with given *id* as not deleted. 
+    Returns True if successful, False if it wasn't deleted.
+    """
+    warehouse = get_warehouse(id_=id_)
+    if warehouse.deleted:
+        warehouse.deleted = False
+        db_model.db.session.add(warehouse)
+        db_model.db.session.commit()
+        return True
+    else:
+        return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

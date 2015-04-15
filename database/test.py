@@ -21,7 +21,7 @@ db.session.add(s2)
 s3 = Supplier(VATIN="653547634", name="company3", location="address...")
 db.session.add(s3)
 
-i1 = ItemType(name="keyboard", model="x15", unit_of_measure="each")
+i1 = ItemType(name="keyboard", item_model="x15", unit_of_measure="each")
 db.session.add(i1)
 
 w1 = Warehouse(name="warehouse1", location="some address ...")
@@ -43,12 +43,35 @@ db.session.commit()
 
 new_w = new_warehouse(name='frank', location='address123')
 new_s = new_supplier(VATIN="63643235", name="Supplier1234", location="random address")
-new_it = new_item_type(name='mouse', model='45T-X', unit_of_measure='each')
+new_it = new_item_type(name='mouse', item_model='45T-X', unit_of_measure='each')
 new_ib = new_item_batch(quantity=10, warehouse=new_w, supplier=new_s, item_type=new_it)
 
-print(new_ib.warehouse.id)
 
 
 
-print(new_ib.warehouse.id)
+print([w for w in get_warehouses()])
+
+print("UNDELETING " + str(undelete_warehouse(id_=3)))
+
+print([w for w in get_warehouses()])
+print("DELETING " + str(delete_warehouse(id_=3)))
+print([w for w in get_warehouses()])
+
+print("UNDELETING " + str(undelete_warehouse(id_=3)))
+print([w for w in get_warehouses()])
+print("UNDELETING " + str(undelete_warehouse(id_=3)))
+
+print("DELETING " + str(delete_warehouse(id_=3)))
+print("UNDELETING " + str(undelete_warehouse(id_=3)))
+
+
+
+
+
+# print([w for w in get_suppliers()])
+# print([w for w in get_item_types()])
+# print([w for w in get_item_batches()])
+
+
+
 

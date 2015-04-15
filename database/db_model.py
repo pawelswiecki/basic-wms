@@ -13,10 +13,12 @@ class Warehouse(db.Model):
     _id = db.Column(db.Integer, primary_key=True, nullable=False)
     _name = db.Column(db.String(80), unique=True, nullable=False)
     _location = db.Column(db.String(120), nullable=False)
+    _deleted = db.Column(db.Boolean, nullable=False)
     
     def __init__(self, name, location):
         self._name = name
         self._location = location
+        self._deleted = False
 
     def __repr__(self):
         return self.__str__()
@@ -42,18 +44,25 @@ class Warehouse(db.Model):
     def location(self, value):
         self._location = value
 
+    @property
+    def deleted(self):
+        return self._deleted
+    @deleted.setter
+    def deleted(self, value):
+        self._deleted = value
+
 
 class ItemType(db.Model):
     __tablename__ = 'item_type'
     
     _id = db.Column(db.Integer, primary_key=True, nullable=False)
     _name = db.Column(db.String(45), nullable=False)
-    _model = db.Column(db.String(45), nullable=False)
+    _item_model = db.Column(db.String(45), nullable=False)
     _unit_of_measure = db.Column(db.String(45), nullable=False)
 
-    def __init__(self, name, model, unit_of_measure):
+    def __init__(self, name, item_model, unit_of_measure):
         self._name = name
-        self._model = model
+        self._item_model = item_model
         self._unit_of_measure = unit_of_measure
 
     def __repr__(self):
@@ -74,11 +83,11 @@ class ItemType(db.Model):
         self._name = value
     
     @property
-    def model(self):
-        return self._model
-    @model.setter
-    def model(self, value):
-        self._model = value
+    def item_model(self):
+        return self._item_model
+    @item_model.setter
+    def item_model(self, value):
+        self._item_model = value
     
     @property
     def unit_of_measure(self):
