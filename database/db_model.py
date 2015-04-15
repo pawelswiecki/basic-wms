@@ -27,7 +27,7 @@ class Warehouse(db.Model):
         return "<Warehouse #{}>".format(self._id)
 
     @property
-    def id(self):
+    def id_(self):
         return self._id    
 
     @property
@@ -72,7 +72,7 @@ class ItemType(db.Model):
         return "<ItemType #{}, name: {}>".format(self._id, self._name)
 
     @property
-    def id(self):
+    def id_(self):
         return self._id
 
     @property
@@ -118,7 +118,7 @@ class Supplier(db.Model):
         return "<Supplier #{}, name: {}>".format(self._id, self._name)
 
     @property
-    def id(self):
+    def id_(self):
         return self._id
 
     @property
@@ -180,7 +180,7 @@ class ItemBatch(db.Model):
         return "<ItemBatch #{}>".format(self._id)
 
     @property
-    def id(self):
+    def id_(self):
         return self._id
 
     @property
@@ -210,7 +210,7 @@ class ItemBatch(db.Model):
     @item_type.setter
     def item_type(self, value):
         self._item_type = value    
-    
+
 
 if __name__ == "__main__":
     db.create_all()
