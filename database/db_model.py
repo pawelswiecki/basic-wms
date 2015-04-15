@@ -25,6 +25,10 @@ class Warehouse(db.Model):
         return "<Warehouse #{}>".format(self._id)
 
     @property
+    def id(self):
+        return self._id    
+
+    @property
     def name(self):
         return self._name
     @name.setter
@@ -57,6 +61,10 @@ class ItemType(db.Model):
 
     def __str__(self):
         return "<ItemType #{}, name: {}>".format(self._id, self._name)
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def name(self):
@@ -99,6 +107,10 @@ class Supplier(db.Model):
 
     def __str__(self):
         return "<Supplier #{}, name: {}>".format(self._id, self._name)
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def VATIN(self):
@@ -159,6 +171,10 @@ class ItemBatch(db.Model):
         return "<ItemBatch #{}>".format(self._id)
 
     @property
+    def id(self):
+        return self._id
+
+    @property
     def quantity(self):
         return self._quantity
     @quantity.setter
@@ -166,25 +182,25 @@ class ItemBatch(db.Model):
         self._quantity = value
 
     @property
-    def warehouse_id(self):
-        return self._warehouse_id
-    @warehouse_id.setter
-    def warehouse_id(self, value):
-        self._warehouse_id = value
+    def warehouse(self):
+        return self._warehouse
+    @warehouse.setter
+    def warehouse(self, value):
+        self._warehouse = value
 
     @property
-    def supplier_id(self):
-        return self._supplier_id
-    @supplier_id.setter
-    def supplier_id(self, value):
-        self._supplier_id = value
+    def supplier(self):
+        return self._supplier
+    @supplier.setter
+    def supplier(self, value):
+        self._supplier = value
 
     @property
-    def item_type_id(self):
-        return self._item_type_id
-    @item_type_id.setter
-    def item_type_id(self, value):
-        self._item_type_id = value    
+    def item_type(self):
+        return self._item_type
+    @item_type.setter
+    def item_type(self, value):
+        self._item_type = value    
     
 
 if __name__ == "__main__":

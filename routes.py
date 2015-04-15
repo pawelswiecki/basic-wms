@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(0, 'database')
-import db_setup
+import db_setup, db_helpers
 
 from flask import Flask
 from sqlalchemy import create_engine
