@@ -59,11 +59,13 @@ class ItemType(db.Model):
     _name = db.Column(db.String(45), nullable=False)
     _item_model = db.Column(db.String(45), nullable=False)
     _unit_of_measure = db.Column(db.String(45), nullable=False)
+    _deleted = db.Column(db.Boolean, nullable=False)
 
     def __init__(self, name, item_model, unit_of_measure):
         self._name = name
         self._item_model = item_model
         self._unit_of_measure = unit_of_measure
+        self._deleted = False
 
     def __repr__(self):
         return self.__str__()
@@ -95,6 +97,13 @@ class ItemType(db.Model):
     @unit_of_measure.setter
     def unit_of_measure(self, value):
         self._unit_of_measure = value
+
+    @property
+    def deleted(self):
+        return self._deleted
+    @deleted.setter
+    def deleted(self, value):
+        self._deleted = value
     
 
 class Supplier(db.Model):
@@ -105,11 +114,13 @@ class Supplier(db.Model):
     _VATIN = db.Column(db.String(45), nullable=False, unique=True)
     _name = db.Column(db.String(45), nullable=False)
     _location = db.Column(db.String(45), nullable=False)
+    _deleted = db.Column(db.Boolean, nullable=False)
 
     def __init__(self, VATIN, name, location):
         self._VATIN = VATIN
         self._name = name
         self._location = location
+        self._deleted = False
 
     def __repr__(self):
         return self.__str__()
@@ -141,6 +152,14 @@ class Supplier(db.Model):
     @location.setter
     def location(self, value):
         self._location = value
+
+    @property
+    def deleted(self):
+        return self._deleted
+    @deleted.setter
+    def deleted(self, value):
+        self._deleted = value
+    
     
 
 class ItemBatch(db.Model):
@@ -148,6 +167,7 @@ class ItemBatch(db.Model):
 
     _id = db.Column(db.Integer, primary_key=True, nullable=False)
     _quantity = db.Column(db.Integer, nullable=False)
+    # _deleted = db.Column(db.Boolean, nullable=False)
    
     _warehouse_id = db.Column(db.Integer, db.ForeignKey("warehouse._id"),
                               nullable=False)
@@ -172,6 +192,7 @@ class ItemBatch(db.Model):
         self._warehouse = warehouse
         self._supplier = supplier
         self._item_type = item_type
+        self._deleted = False
 
     def __repr__(self):
         return self.__str__()
@@ -209,7 +230,15 @@ class ItemBatch(db.Model):
         return self._item_type
     @item_type.setter
     def item_type(self, value):
-        self._item_type = value    
+        self._item_type = value
+
+    @property
+    def deleted(self):
+        return self._deleted
+    @deleted.setter
+    def deleted(self, value):
+        self._deleted = value
+    
 
 
 if __name__ == "__main__":

@@ -48,10 +48,18 @@ new_ib = db_helpers.new_item_batch(quantity=10, warehouse=new_w, supplier=new_s,
 
 print(new_ib.id_)
 
+db_helpers.delete_item_batch(id_=1)
 
-# print([w for w in get_suppliers()])
-# print([w for w in get_item_types()])
-# print([w for w in get_item_batches()])
+print([w for w in db_helpers.get_item_batches(with_deleted=False)])
+print()
+print([w for w in db_helpers.get_item_batches(with_deleted=True)])
+print()
+
+db_helpers.undelete_item_batch(id_=1)
+
+print([w for w in db_helpers.get_item_batches(with_deleted=False)])
+# print([w for w in db_helpers.get_item_types()])
+# print([w for w in db_helpers.get_item_batches()])
 
 
 

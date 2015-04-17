@@ -1,5 +1,9 @@
 import db_model
 
+# TO DO
+# - make functions more abstract to avoid code repetition
+# - write Update functions
+
                                   ############
                                   #  CREATE  #
                                   ############
@@ -93,29 +97,32 @@ def get_warehouses(with_deleted=False):
         if with_deleted or not warehouse.deleted:
             yield warehouse
 
-def get_suppliers():
+def get_suppliers(with_deleted=False):
     """ Yields all suppliers."""
     suppliers = db_model.Supplier.query.all()
     for supplier in suppliers:
-        yield supplier
+        if with_deleted or not supplier.deleted:
+            yield supplier
 
-def get_item_types():
+def get_item_types(with_deleted=False):
     """ Yields all item_types."""
     item_types = db_model.ItemType.query.all()
     for item_type in item_types:
-        yield item_type
+        if with_deleted or not item_type.deleted:
+            yield item_type
 
-def get_item_batches():
+def get_item_batches(with_deleted=False):
     """ Yields all item_batches."""
     item_batches = db_model.ItemBatch.query.all()
     for item_batch in item_batches:
-        yield item_batch
+        if with_deleted or not item_batch.deleted:
+            yield item_batch
 
 
                                   ############
                                   #  UPDATE  #
                                   ############
-
+# TO DO
 
 
                                   ############
@@ -151,18 +158,86 @@ def undelete_warehouse(id_):
         return False
 
 
+def delete_supplier(id_):
+    """
+    Marks supplier with given *id* as deleted. 
+    Returns True if successful, False if it was already deleted.
+    """
+    supplier = get_supplier(id_=id_)
+    if not supplier.deleted:
+        supplier.deleted = True
+        db_model.db.session.add(supplier)
+        db_model.db.session.commit()
+        return True
+    else:
+        return False
 
+def undelete_supplier(id_):
+    """
+    Marks supplier with given *id* as not deleted. 
+    Returns True if successful, False if it wasn't deleted.
+    """
+    supplier = get_supplier(id_=id_)
+    if supplier.deleted:
+        supplier.deleted = False
+        db_model.db.session.add(supplier)
+        db_model.db.session.commit()
+        return True
+    else:
+        return False
 
+def delete_item_type(id_):
+    """
+    Marks item_type with given *id* as deleted. 
+    Returns True if successful, False if it was already deleted.
+    """
+    item_type = get_item_type(id_=id_)
+    if not item_type.deleted:
+        item_type.deleted = True
+        db_model.db.session.add(item_type)
+        db_model.db.session.commit()
+        return True
+    else:
+        return False
 
+def undelete_item_type(id_):
+    """
+    Marks item_type with given *id* as not deleted. 
+    Returns True if successful, False if it wasn't deleted.
+    """
+    item_type = get_item_type(id_=id_)
+    if item_type.deleted:
+        item_type.deleted = False
+        db_model.db.session.add(item_type)
+        db_model.db.session.commit()
+        return True
+    else:
+        return False
 
+def delete_item_batch(id_):
+    """
+    Marks item_batch with given *id* as deleted. 
+    Returns True if successful, False if it was already deleted.
+    """
+    item_batch= get_item_batch(id_=id_)
+    if not item_batch.deleted:
+        item_batch.deleted = True
+        db_model.db.session.add(item_batch)
+        db_model.db.session.commit()
+        return True
+    else:
+        return False
 
-
-
-
-
-
-
-
-
-
-
+def undelete_item_batch(id_):
+    """
+    Marks item_batch with given *id* as not deleted. 
+    Returns True if successful, False if it wasn't deleted.
+    """
+    item_batch = get_item_batch(id_=id_)
+    if item_batch.deleted:
+        item_batch.deleted = False
+        db_model.db.session.add(item_batch)
+        db_model.db.session.commit()
+        return True
+    else:
+        return False
