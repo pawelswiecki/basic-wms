@@ -1,11 +1,10 @@
 import sys
-sys.path.insert(0, 'database')
-import db_setup, db_helpers
+sys.path.insert(0, 'model')
+import db_model, db_helpers
 
 from flask import Flask
 from sqlalchemy import create_engine
 
-# from sqlalchemy import create_engine
 engine = create_engine('sqlite:///restaurantmenu.db')
 
 app = Flask(__name__)
