@@ -1,4 +1,4 @@
-import model.db_model
+import basic_wms.model.db_model
 
 # TO DO
 # - make functions more abstract to avoid code repetition
