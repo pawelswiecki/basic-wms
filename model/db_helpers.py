@@ -1,4 +1,4 @@
-import db_model
+import model.db_model
 
 # TO DO
 # - make functions more abstract to avoid code repetition

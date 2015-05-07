@@ -1,6 +1,7 @@
 import sys
-sys.path.insert(0, 'model')
-import db_model, db_helpers
+
+import model.db_model
+import model.db_helpers
 
 from flask import Flask
 from sqlalchemy import create_engine
