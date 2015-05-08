@@ -24,9 +24,10 @@ def new_supplier(VATIN, name, location):
     db_model.db.session.commit()
     return supplier
 
-def new_item_type(name, item_model, unit_of_measure):
+def new_item_type(name, item_model, manufacturer, unit_of_measure):
     """ Adds new item type to db and returns it."""
     item_type = db_model.ItemType(name=name, item_model=item_model,
+                                  manufacturer=manufacturer,
                                   unit_of_measure=unit_of_measure)
     db_model.db.session.add(item_type)
     db_model.db.session.commit()
@@ -141,7 +142,7 @@ def get_item_batches(with_deleted=False):
 #     db_model.db.session.commit()
 #     return supplier
 
-# def update_item_type(id_, name=None, item_model=None, unit_of_measure=None):
+# def update_item_type(id_, name=None, item_model=None, manufacturer=None, unit_of_measure=None):
 #     """ Updates a item in db and returns it."""
 #     item_type = get_item_type(id_)
 #     db_model.db.session.add(item_type)

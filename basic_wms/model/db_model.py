@@ -60,12 +60,14 @@ class ItemType(db.Model):
     _id = db.Column(db.Integer, primary_key=True, nullable=False)
     _name = db.Column(db.String(45), nullable=False)
     _item_model = db.Column(db.String(45), nullable=False)
+    _manufacturer = db.Column(db.String(45), nullable=False)
     _unit_of_measure = db.Column(db.String(45), nullable=False)
     _deleted = db.Column(db.Boolean, nullable=False)
 
-    def __init__(self, name, item_model, unit_of_measure):
+    def __init__(self, name, item_model, manufacturer, unit_of_measure):
         self._name = name
         self._item_model = item_model
+        self._manufacturer = manufacturer
         self._unit_of_measure = unit_of_measure
         self._deleted = False
 
@@ -92,6 +94,13 @@ class ItemType(db.Model):
     @item_model.setter
     def item_model(self, value):
         self._item_model = value
+
+    @property
+    def manufacturer(self):
+        return self._manufacturer
+    @manufacturer.setter
+    def manufacturer(self, value):
+        self._manufacturer = value    
     
     @property
     def unit_of_measure(self):
@@ -241,6 +250,6 @@ class ItemBatch(db.Model):
     def deleted(self, value):
         self._deleted = value
     
-    
+
 if __name__ == "__main__":
     db.create_all()
