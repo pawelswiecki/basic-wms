@@ -1,12 +1,23 @@
-from os import remove
+print(" # test.py")
 
-from basic_wms.model import db_api
+from os import getcwd, remove
+
 from basic_wms.model import db_model
+from basic_wms.model import db_api
 
+# deletes database file if it exists
+cwd = getcwd()
+try:
+    remove(cwd + "/basic_wms/model/" + db_model.DB_FILENAME)    
+except FileNotFoundError:
+    print("File not found")
+
+db_model.db.create_all()
 
 db_api.new_warehouse(name="Yawn", location="address123")
+db_api.new_warehouse(name="Yawn2", location="address314")
+db_api.new_warehouse(name="zal.pl", location="address4321")
 
-# suppliers = db_api.get_suppliers
 
 
 #############################

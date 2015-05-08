@@ -58,3 +58,4 @@ target/
 
 *.sublime-workspace
 *.db
+/random_stuff

@@ -1,3 +1,5 @@
+print(" # db_api.py")
+
 from basic_wms.model import db_model
 
 # TO DO
@@ -122,7 +124,37 @@ def get_item_batches(with_deleted=False):
                                   ############
                                   #  UPDATE  #
                                   ############
-# TO DO
+
+# work in progress
+
+# def update_warehouse(id_, name=None, location=None):
+#     """ Updates a warehouse in db and returns it."""
+#     warehouse = db_model.Warehouse(name=name, location=location)
+#     db_model.db.session.add(warehouse)
+#     db_model.db.session.commit()
+#     return warehouse
+
+# def update_supplier(id_, VATIN=None, name=None, location=None):
+#     """ Updates a supplier in db and returns it."""
+#     supplier = get_supplier(id_)
+#     db_model.db.session.add(supplier)
+#     db_model.db.session.commit()
+#     return supplier
+
+# def update_item_type(id_, name=None, item_model=None, unit_of_measure=None):
+#     """ Updates a item in db and returns it."""
+#     item_type = get_item_type(id_)
+#     db_model.db.session.add(item_type)
+#     db_model.db.session.commit()
+#     return item_type
+
+# def update_item_batch(id_, quantity=None, warehouse=None, supplier=None, 
+#                       item_type=None):
+#     """ Updates a item in db and returns it."""
+#     item_batch = get_item_batch(id_)
+#     db_model.db.session.add(item_batch)
+#     db_model.db.session.commit()
+#     return item_batch
 
 
                                   ############
