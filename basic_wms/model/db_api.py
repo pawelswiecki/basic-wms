@@ -12,37 +12,57 @@ from basic_wms.model import db_model
                                   #  CREATE  #
                                   ############
 
-def new_warehouse(name, location):
-    """ Adds new warehouse to db and returns it."""
-    warehouse = db_model.Warehouse(name=name, location=location)
-    db_model.db.session.add(warehouse)
-    db_model.db.session.commit()
-    return warehouse
+def new_warehouse(**kwargs):
+    """
+    Adds new warehouse to db and returns it,
+    or returns None if *kwargs* do not match Warehouse class properties.
+    """
+    if all(key in property_list(db_model.Warehouse) for key in kwargs):
+        entity = db_model.Warehouse(**kwargs)
+        db_model.db.session.add(entity)
+        db_model.db.session.commit()
+        return entity
+    else:
+        return None
 
-def new_supplier(VATIN, name, location):
-    """ Adds new supplier to db and returns it."""
-    supplier = db_model.Supplier(VATIN=VATIN, name=name, location=location)
-    db_model.db.session.add(supplier)
-    db_model.db.session.commit()
-    return supplier
+def new_supplier(**kwargs):
+    """
+    Adds new supplier to db and returns it,
+    or returns None if *kwargs* do not match Supplier class properties.
+    """
+    if all(key in property_list(db_model.Supplier) for key in kwargs):
+        entity = db_model.Supplier(**kwargs)
+        db_model.db.session.add(entity)
+        db_model.db.session.commit()
+        return entity
+    else:
+        return None
 
-def new_item_type(name, item_model, manufacturer, unit_of_measure):
-    """ Adds new item type to db and returns it."""
-    item_type = db_model.ItemType(name=name, item_model=item_model,
-                                  manufacturer=manufacturer,
-                                  unit_of_measure=unit_of_measure)
-    db_model.db.session.add(item_type)
-    db_model.db.session.commit()
-    return item_type
+def new_item_type(**kwargs):
+    """
+    Adds new item_type to db and returns it,
+    or returns None if *kwargs* do not match ItemType class properties.
+    """
+    if all(key in property_list(db_model.ItemType) for key in kwargs):
+        entity = db_model.ItemType(**kwargs)
+        db_model.db.session.add(entity)
+        db_model.db.session.commit()
+        return entity
+    else:
+        return None
 
-def new_item_batch(quantity, warehouse, supplier, item_type):
-    """ Adds new item batch to db and returns it."""
-    item_batch = db_model.ItemBatch(quantity=quantity, warehouse=warehouse,
-                                    supplier=supplier, item_type=item_type)
-    db_model.db.session.add(item_batch)
-    db_model.db.session.commit()
-    return item_batch
-
+def new_item_batch(**kwargs):
+    """
+    Adds new item_batch to db and returns it,
+    or returns None if *kwargs* do not match ItemBatch class properties.
+    """
+    if all(key in property_list(db_model.ItemBatch) for key in kwargs):
+        entity = db_model.ItemBatch(**kwargs)
+        db_model.db.session.add(entity)
+        db_model.db.session.commit()
+        return entity
+    else:
+        return None
 
 
                                   ############

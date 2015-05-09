@@ -48,9 +48,12 @@ item_type3 = next(item_types)
 print()
 print("TESTS")
 # print("adding batches:")
-batch1 = db_api.new_item_batch(150, warehouse1, supplier1, item_type1)
-batch2 = db_api.new_item_batch(56, warehouse2, supplier2, item_type2)
-batch3 = db_api.new_item_batch(566, warehouse3, supplier3, item_type3)
+batch1 = db_api.new_item_batch(quantity=150, warehouse=warehouse1, 
+                               supplier=supplier1, item_type=item_type1)
+batch2 = db_api.new_item_batch(quantity=56, warehouse=warehouse2, 
+                               supplier=supplier2, item_type=item_type2)
+batch3 = db_api.new_item_batch(quantity=566, warehouse=warehouse3, 
+                               supplier=supplier3, item_type=item_type3)
 
 print("  01.", batch1.supplier.id_ == 1)
 print("  02.", batch2.supplier.id_ == 2)
