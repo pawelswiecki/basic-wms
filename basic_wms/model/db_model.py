@@ -3,10 +3,11 @@ print(" # db_model.py")
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
+from basic_wms import app 
+
 DB_FILENAME = 'database.db'
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + DB_FILENAME
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///model/' + DB_FILENAME
 db = SQLAlchemy(app)
 
 class Warehouse(db.Model):
