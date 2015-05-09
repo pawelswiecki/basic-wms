@@ -5,7 +5,6 @@ from os import getcwd, remove
 from basic_wms.model import db_model
 from basic_wms.model import db_api
 
-
 # deletes database file if it exists
 cwd = getcwd()
 try:
@@ -25,22 +24,41 @@ db_api.new_supplier(VATIN="1010-2020-030", name="Company 3", location="address Z
 
 db_api.new_item_type(name="keyboard", item_model="X-PRO 2", manufacturer="HiTex",
                      unit_of_measure="EA")
-
 db_api.new_item_type(name="cell phone", item_model="3310", manufacturer="Nokia",
                      unit_of_measure="EA")
-
 db_api.new_item_type(name="water", item_model="fresh", manufacturer="Coca-Cola",
                      unit_of_measure="liter")
 
 
-# warehouse1 = db_api.get_warehouses()
+warehouses = db_api.get_warehouses()
+warehouse1 = next(warehouses)
+warehouse2 = next(warehouses)
+warehouse3 = next(warehouses)
 
-# print(warehouse1)
+suppliers = db_api.get_suppliers()
+supplier1 = next(suppliers)
+supplier2 = next(suppliers)
+supplier3 = next(suppliers)
 
-# db_model.db.get_engine(app).dispose()
+item_types = db_api.get_item_types()
+item_type1 = next(item_types)
+item_type2 = next(item_types)
+item_type3 = next(item_types)
 
-# print(next(warehouse1))
+batch1 = db_api.new_item_batch(150, warehouse1, supplier1, item_type1)
+batch2 = db_api.new_item_batch(56, warehouse2, supplier2, item_type2)
+batch3 = db_api.new_item_batch(566, warehouse3, supplier3, item_type3)
 
-# warehouse1.close()
+print()
+print("tests:")
+print("01.", batch1.supplier.id_ == 1)
+print("02.", batch2.supplier.id_ == 2)
+print("03.", batch3.supplier.id_ == 3)
 
-# print(db_api.get_warehouses().close())
+print("04.", batch1.warehouse.id_ == 1)
+print("05.", batch2.warehouse.id_ == 2)
+print("06.", batch3.warehouse.id_ == 3)
+
+print("07.", batch1.item_type.id_ == 1)
+print("08.", batch2.item_type.id_ == 2)
+print("09.", batch3.item_type.id_ == 3)
