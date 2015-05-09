@@ -126,14 +126,35 @@ def get_item_batches(with_deleted=False):
                                   #  UPDATE  #
                                   ############
 
-# work in progress
+def update_warehouse(id_, name=None, location=None):
+    """ Updates in db name and/or location of a warehouse with given *id_*
+    and returns it."""
+    warehouse = get_warehouse(id_)
 
-# def update_warehouse(id_, name=None, location=None):
-#     """ Updates a warehouse in db and returns it."""
-#     warehouse = db_model.Warehouse(name=name, location=location)
-#     db_model.db.session.add(warehouse)
-#     db_model.db.session.commit()
-#     return warehouse
+    if name:
+        warehouse.name = name
+    if location:
+        warehouse.location = location
+
+    db_model.db.session.add(warehouse)
+    db_model.db.session.commit()
+    return warehouse
+
+def update_warehouse2(id_, **kwargs):
+    """ Updates in db name and/or location of a warehouse with given *id_*
+    and returns it.
+    Return None if argument's name does not match object's fields."""
+    
+    if all(key in ("name", "location") for key in kwargs):
+        warehouse = get_warehouse(id_)
+        for key, value in kwargs.items():            
+            setattr(warehouse, key, value)
+
+        db_model.db.session.add(warehouse)
+        db_model.db.session.commit()
+        return warehouse
+    else:
+        return None
 
 # def update_supplier(id_, VATIN=None, name=None, location=None):
 #     """ Updates a supplier in db and returns it."""

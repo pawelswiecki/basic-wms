@@ -45,20 +45,40 @@ item_type1 = next(item_types)
 item_type2 = next(item_types)
 item_type3 = next(item_types)
 
+print()
+print("TESTS")
+print("adding batches:")
 batch1 = db_api.new_item_batch(150, warehouse1, supplier1, item_type1)
 batch2 = db_api.new_item_batch(56, warehouse2, supplier2, item_type2)
 batch3 = db_api.new_item_batch(566, warehouse3, supplier3, item_type3)
 
-print()
-print("tests:")
-print("01.", batch1.supplier.id_ == 1)
-print("02.", batch2.supplier.id_ == 2)
-print("03.", batch3.supplier.id_ == 3)
+print("  01.", batch1.supplier.id_ == 1)
+print("  02.", batch2.supplier.id_ == 2)
+print("  03.", batch3.supplier.id_ == 3)
 
-print("04.", batch1.warehouse.id_ == 1)
-print("05.", batch2.warehouse.id_ == 2)
-print("06.", batch3.warehouse.id_ == 3)
+print("  04.", batch1.warehouse.id_ == 1)
+print("  05.", batch2.warehouse.id_ == 2)
+print("  06.", batch3.warehouse.id_ == 3)
+  
+print("  07.", batch1.item_type.id_ == 1)
+print("  08.", batch2.item_type.id_ == 2)
+print("  09.", batch3.item_type.id_ == 3)
 
-print("07.", batch1.item_type.id_ == 1)
-print("08.", batch2.item_type.id_ == 2)
-print("09.", batch3.item_type.id_ == 3)
+print("updating warehouse:")
+warehouses = db_api.get_warehouses()
+warehouse1 = next(warehouses)
+warehouse1_id = warehouse1.id_
+db_api.update_warehouse(warehouse1_id, name="Frank")
+print("  10.", db_api.get_warehouse(warehouse1_id).name == "Frank")
+db_api.update_warehouse(warehouse1_id, location="new address")
+print("  11.", db_api.get_warehouse(warehouse1_id).location == "new address")
+
+db_api.update_warehouse(warehouse1_id, name="Bob", location="newer address")
+print("  12.", db_api.get_warehouse(warehouse1_id).location == "newer address")
+print("  13.", db_api.get_warehouse(warehouse1_id).name == "Bob")
+
+
+
+
+
+

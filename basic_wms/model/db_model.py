@@ -8,6 +8,7 @@ from basic_wms import app
 DB_FILENAME = 'database.db'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///model/' + DB_FILENAME
+# app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
 class Warehouse(db.Model):
