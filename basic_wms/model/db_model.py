@@ -32,7 +32,6 @@ class Warehouse(db.Model, CommonFields):
         self.init_common_fileds()
         self._name = name
         self._location = location
-        self._deleted = False
 
     def __repr__(self):
         return self.__str__()
@@ -80,7 +79,6 @@ class ItemType(db.Model, CommonFields):
         self._item_model = item_model
         self._manufacturer = manufacturer
         self._unit_of_measure = unit_of_measure
-        self._deleted = False
 
     def __repr__(self):
         return self.__str__()
@@ -141,7 +139,6 @@ class Supplier(db.Model, CommonFields):
         self._VATIN = VATIN
         self._name = name
         self._location = location
-        self._deleted = False
 
     def __repr__(self):
         return self.__str__()
@@ -212,7 +209,6 @@ class ItemBatch(db.Model, CommonFields):
         self._warehouse = warehouse
         self._supplier = supplier
         self._item_type = item_type
-        self._deleted = False
 
     def __repr__(self):
         return self.__str__()
