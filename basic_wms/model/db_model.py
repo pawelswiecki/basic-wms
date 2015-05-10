@@ -22,6 +22,17 @@ class CommonFields():
     def init_common_fileds(self):
         self._deleted = False
 
+    @property
+    def id_(self):
+        return self._id
+
+    @property
+    def deleted(self):
+        return self._deleted
+    @deleted.setter
+    def deleted(self, value):
+        self._deleted = value
+
 class Warehouse(db.Model, CommonFields):
     __tablename__ = 'warehouse'
 
@@ -40,10 +51,6 @@ class Warehouse(db.Model, CommonFields):
         return "<Warehouse #{}>".format(self._id)
 
     @property
-    def id_(self):
-        return self._id    
-
-    @property
     def name(self):
         return self._name
     @name.setter
@@ -55,14 +62,7 @@ class Warehouse(db.Model, CommonFields):
         return self._location
     @location.setter
     def location(self, value):
-        self._location = value
-
-    @property
-    def deleted(self):
-        return self._deleted
-    @deleted.setter
-    def deleted(self, value):
-        self._deleted = value
+        self._location = value    
 
 
 class ItemType(db.Model, CommonFields):
@@ -86,9 +86,7 @@ class ItemType(db.Model, CommonFields):
     def __str__(self):
         return "<ItemType #{}, name: {}>".format(self._id, self._name)
 
-    @property
-    def id_(self):
-        return self._id
+    
 
     @property
     def name(self):
@@ -116,14 +114,7 @@ class ItemType(db.Model, CommonFields):
         return self._unit_of_measure
     @unit_of_measure.setter
     def unit_of_measure(self, value):
-        self._unit_of_measure = value
-
-    @property
-    def deleted(self):
-        return self._deleted
-    @deleted.setter
-    def deleted(self, value):
-        self._deleted = value
+        self._unit_of_measure = value    
     
 
 class Supplier(db.Model, CommonFields):
@@ -147,10 +138,6 @@ class Supplier(db.Model, CommonFields):
         return "<Supplier #{}, name: {}>".format(self._id, self._name)
 
     @property
-    def id_(self):
-        return self._id
-
-    @property
     def VATIN(self):
         return self._VATIN
     @VATIN.setter
@@ -169,15 +156,7 @@ class Supplier(db.Model, CommonFields):
         return self._location
     @location.setter
     def location(self, value):
-        self._location = value
-
-    @property
-    def deleted(self):
-        return self._deleted
-    @deleted.setter
-    def deleted(self, value):
-        self._deleted = value
-    
+        self._location = value    
     
 
 class ItemBatch(db.Model, CommonFields):
@@ -217,10 +196,6 @@ class ItemBatch(db.Model, CommonFields):
         return "<ItemBatch #{}>".format(self._id)
 
     @property
-    def id_(self):
-        return self._id
-
-    @property
     def quantity(self):
         return self._quantity
     @quantity.setter
@@ -247,13 +222,6 @@ class ItemBatch(db.Model, CommonFields):
     @item_type.setter
     def item_type(self, value):
         self._item_type = value
-
-    @property
-    def deleted(self):
-        return self._deleted
-    @deleted.setter
-    def deleted(self, value):
-        self._deleted = value
     
 
 if __name__ == "__main__":
