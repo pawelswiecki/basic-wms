@@ -20,7 +20,7 @@ class CommonFieldsSQLA():
     _id = db.Column(db.Integer, primary_key=True, nullable=False)
     _deleted = db.Column(db.Boolean, nullable=False)
 
-    def init_common_fileds(self):
+    def init_common_fields(self):
         self._deleted = False
 
 
@@ -43,7 +43,7 @@ class WarehouseSQLA(db.Model, CommonFieldsSQLA):
     _location = db.Column(db.String(120), nullable=False)    
     
     def __init__(self, name, location):
-        self.init_common_fileds()
+        self.init_common_fields()
         self._name = name
         self._location = location
 
@@ -77,7 +77,7 @@ class ItemTypeSQLA(db.Model, CommonFieldsSQLA):
     _unit_of_measure = db.Column(db.String(45), nullable=False)    
 
     def __init__(self, name, item_model, manufacturer, unit_of_measure):
-        self.init_common_fileds()
+        self.init_common_fields()
         self._name = name
         self._item_model = item_model
         self._manufacturer = manufacturer
@@ -127,7 +127,7 @@ class SupplierSQLA(db.Model, CommonFieldsSQLA):
     _location = db.Column(db.String(45), nullable=False)    
 
     def __init__(self, VATIN, name, location):
-        self.init_common_fileds()
+        self.init_common_fields()
         self._VATIN = VATIN
         self._name = name
         self._location = location
@@ -184,7 +184,7 @@ class ItemBatchSQLA(db.Model, CommonFieldsSQLA):
                                                    lazy="dynamic"))
 
     def __init__(self, quantity, warehouse, supplier, item_type):
-        self.init_common_fileds()
+        self.init_common_fields()
         self._quantity = quantity
         self._warehouse = warehouse
         self._supplier = supplier

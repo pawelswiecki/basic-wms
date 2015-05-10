@@ -4,9 +4,6 @@ from inspect import getmembers
 
 from basic_wms.model import db_model
 
-# TO DO
-# - make functions more abstract to avoid code repetition
-# - write Update functions
 
                                   ############
                                   #  CREATE  #
