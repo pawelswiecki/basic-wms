@@ -11,7 +11,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///model/' + DB_FILENAME
 # app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
-class CommonFields():
+class CommonFieldsSQLA():
     """
     Here *_id* and *_deleted*, fields common to all ORM objects,
     are created.
@@ -34,7 +34,7 @@ class CommonFields():
     def deleted(self, value):
         self._deleted = value
 
-class Warehouse(db.Model, CommonFields):
+class WarehouseSQLA(db.Model, CommonFieldsSQLA):
     __tablename__ = 'warehouse'
 
     _name = db.Column(db.String(80), unique=True, nullable=False)
@@ -66,7 +66,7 @@ class Warehouse(db.Model, CommonFields):
         self._location = value    
 
 
-class ItemType(db.Model, CommonFields):
+class ItemTypeSQLA(db.Model, CommonFieldsSQLA):
     __tablename__ = 'item_type'    
     
     _name = db.Column(db.String(45), nullable=False)
@@ -116,7 +116,7 @@ class ItemType(db.Model, CommonFields):
         self._unit_of_measure = value    
     
 
-class Supplier(db.Model, CommonFields):
+class SupplierSQLA(db.Model, CommonFieldsSQLA):
     __tablename__ = 'supplier'    
     
     # VAT identification number (NIP in Poland)
@@ -158,26 +158,26 @@ class Supplier(db.Model, CommonFields):
         self._location = value    
     
 
-class ItemBatch(db.Model, CommonFields):
+class ItemBatchSQLA(db.Model, CommonFieldsSQLA):
     __tablename__ = 'item_batch'
     
     _quantity = db.Column(db.Integer, nullable=False)    
    
     _warehouse_id = db.Column(db.Integer, db.ForeignKey("warehouse._id"),
                               nullable=False)
-    _warehouse = db.relationship("Warehouse",
+    _warehouse = db.relationship("WarehouseSQLA",
                                  backref=db.backref("item_batches",
                                                    lazy="dynamic"))
     
     _supplier_id = db.Column(db.Integer, db.ForeignKey("supplier._id"),
                              nullable=False)
-    _supplier = db.relationship("Supplier",
+    _supplier = db.relationship("SupplierSQLA",
                                 backref=db.backref("item_batches",
                                                   lazy="dynamic"))
 
     _item_type_id = db.Column(db.Integer, db.ForeignKey("item_type._id"),
                               nullable=False)
-    _item_type = db.relationship("ItemType",
+    _item_type = db.relationship("ItemTypeSQLA",
                                  backref=db.backref("item_batches",
                                                    lazy="dynamic"))
 

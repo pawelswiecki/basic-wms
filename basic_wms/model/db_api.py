@@ -17,8 +17,8 @@ def new_warehouse(**kwargs):
     Adds new warehouse to db and returns it,
     or returns None if *kwargs* do not match Warehouse class properties.
     """
-    if all(key in property_list(db_model.Warehouse) for key in kwargs):
-        entity = db_model.Warehouse(**kwargs)
+    if all(key in property_list(db_model.WarehouseSQLA) for key in kwargs):
+        entity = db_model.WarehouseSQLA(**kwargs)
         db_model.db.session.add(entity)
         db_model.db.session.commit()
         return entity
@@ -30,8 +30,8 @@ def new_supplier(**kwargs):
     Adds new supplier to db and returns it,
     or returns None if *kwargs* do not match Supplier class properties.
     """
-    if all(key in property_list(db_model.Supplier) for key in kwargs):
-        entity = db_model.Supplier(**kwargs)
+    if all(key in property_list(db_model.SupplierSQLA) for key in kwargs):
+        entity = db_model.SupplierSQLA(**kwargs)
         db_model.db.session.add(entity)
         db_model.db.session.commit()
         return entity
@@ -43,8 +43,8 @@ def new_item_type(**kwargs):
     Adds new item_type to db and returns it,
     or returns None if *kwargs* do not match ItemType class properties.
     """
-    if all(key in property_list(db_model.ItemType) for key in kwargs):
-        entity = db_model.ItemType(**kwargs)
+    if all(key in property_list(db_model.ItemTypeSQLA) for key in kwargs):
+        entity = db_model.ItemTypeSQLA(**kwargs)
         db_model.db.session.add(entity)
         db_model.db.session.commit()
         return entity
@@ -56,8 +56,8 @@ def new_item_batch(**kwargs):
     Adds new item_batch to db and returns it,
     or returns None if *kwargs* do not match ItemBatch class properties.
     """
-    if all(key in property_list(db_model.ItemBatch) for key in kwargs):
-        entity = db_model.ItemBatch(**kwargs)
+    if all(key in property_list(db_model.ItemBatchSQLA) for key in kwargs):
+        entity = db_model.ItemBatchSQLA(**kwargs)
         db_model.db.session.add(entity)
         db_model.db.session.commit()
         return entity
@@ -75,7 +75,7 @@ def get_warehouse(id_):
     Returns individual warehouse with given *id* 
     or None if there is no such a warehouse.
     """
-    query1 = db_model.Warehouse.query.filter_by(_id=id_)
+    query1 = db_model.WarehouseSQLA.query.filter_by(_id=id_)
     if query1.count() > 0:
         return query1.one()
     else:
@@ -86,7 +86,7 @@ def get_supplier(id_):
     Returns individual supplier with given *id*
     or None if there is no such a supplier.
     """
-    query1 = db_model.Supplier.query.filter_by(_id=id_)
+    query1 = db_model.SupplierSQLA.query.filter_by(_id=id_)
     if query1.count() > 0:
         return query1.one()
     else:
@@ -97,7 +97,7 @@ def get_item_type(id_):
     Returns individual item_type with given *id*
     or None if there is no such an item_type.
     """
-    query1 = db_model.ItemType.query.filter_by(_id=id_)
+    query1 = db_model.ItemTypeSQLA.query.filter_by(_id=id_)
     if query1.count() > 0:
         return query1.one()
     else:
@@ -108,7 +108,7 @@ def get_item_batch(id_):
     Returns individual item_batch with given *id*
     or None if there is no such an item_type.
     """
-    query1 = db_model.ItemBatch.query.filter_by(_id=id_)
+    query1 = db_model.ItemBatchSQLA.query.filter_by(_id=id_)
     if query1.count() > 0:
         return query1.one()
     else:
@@ -117,28 +117,28 @@ def get_item_batch(id_):
 # group getters
 def get_warehouses(with_deleted=False):
     """ Yields all warehouses."""
-    warehouses = db_model.Warehouse.query.all()
+    warehouses = db_model.WarehouseSQLA.query.all()
     for warehouse in warehouses:
         if not warehouse.deleted or with_deleted:
             yield warehouse
 
 def get_suppliers(with_deleted=False):
     """ Yields all suppliers."""
-    suppliers = db_model.Supplier.query.all()
+    suppliers = db_model.SupplierSQLA.query.all()
     for supplier in suppliers:
         if not supplier.deleted or with_deleted:
             yield supplier
 
 def get_item_types(with_deleted=False):
     """ Yields all item_types."""
-    item_types = db_model.ItemType.query.all()
+    item_types = db_model.ItemTypeSQLA.query.all()
     for item_type in item_types:
         if not item_type.deleted or with_deleted:
             yield item_type
 
 def get_item_batches(with_deleted=False):
     """ Yields all item_batches."""
-    item_batches = db_model.ItemBatch.query.all()
+    item_batches = db_model.ItemBatchSQLA.query.all()
     for item_batch in item_batches:
         if not item_batch.deleted or with_deleted:
             yield item_batch
@@ -156,7 +156,7 @@ def update_warehouse(id_, **kwargs):
     fields."""
     
     # checks if arguments in *kwargs* are indeed properties of Warehouse class
-    if all(key in property_list(db_model.Warehouse) for key in kwargs):
+    if all(key in property_list(db_model.WarehouseSQLA) for key in kwargs):
         entity = get_warehouse(id_)
         for key, value in kwargs.items():            
             setattr(entity, key, value)
@@ -174,7 +174,7 @@ def update_supplier(id_, **kwargs):
     fields."""
     
     # checks if arguments in *kwargs* are indeed properties of Supplier class
-    if all(key in property_list(db_model.Supplier) for key in kwargs):
+    if all(key in property_list(db_model.SupplierSQLA) for key in kwargs):
         entity = get_supplier(id_)
         for key, value in kwargs.items():            
             setattr(entity, key, value)
@@ -192,7 +192,7 @@ def update_item_type(id_, **kwargs):
     fields."""
     
     # checks if arguments in *kwargs* are indeed properties of ItemType class
-    if all(key in property_list(db_model.ItemType) for key in kwargs):
+    if all(key in property_list(db_model.ItemTypeSQLA) for key in kwargs):
         entity = get_item_type(id_)
         for key, value in kwargs.items():            
             setattr(entity, key, value)
@@ -210,7 +210,7 @@ def update_item_batch(id_, **kwargs):
     fields."""
     
     # checks if arguments in *kwargs* are indeed properties of ItemBatch class
-    if all(key in property_list(db_model.ItemBatch) for key in kwargs):
+    if all(key in property_list(db_model.ItemBatchSQLA) for key in kwargs):
         entity = get_item_batch(id_)
         for key, value in kwargs.items():            
             setattr(entity, key, value)
