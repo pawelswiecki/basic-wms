@@ -22,6 +22,7 @@ class CommonFields():
     def init_common_fileds(self):
         self._deleted = False
 
+
     @property
     def id_(self):
         return self._id
@@ -85,8 +86,6 @@ class ItemType(db.Model, CommonFields):
 
     def __str__(self):
         return "<ItemType #{}, name: {}>".format(self._id, self._name)
-
-    
 
     @property
     def name(self):
