@@ -119,28 +119,28 @@ def get_warehouses(with_deleted=False):
     """ Yields all warehouses."""
     warehouses = db_model.Warehouse.query.all()
     for warehouse in warehouses:
-        if with_deleted or not warehouse.deleted:
+        if not warehouse.deleted or with_deleted:
             yield warehouse
 
 def get_suppliers(with_deleted=False):
     """ Yields all suppliers."""
     suppliers = db_model.Supplier.query.all()
     for supplier in suppliers:
-        if with_deleted or not supplier.deleted:
+        if not supplier.deleted or with_deleted:
             yield supplier
 
 def get_item_types(with_deleted=False):
     """ Yields all item_types."""
     item_types = db_model.ItemType.query.all()
     for item_type in item_types:
-        if with_deleted or not item_type.deleted:
+        if not item_type.deleted or with_deleted:
             yield item_type
 
 def get_item_batches(with_deleted=False):
     """ Yields all item_batches."""
     item_batches = db_model.ItemBatch.query.all()
     for item_batch in item_batches:
-        if with_deleted or not item_batch.deleted:
+        if not item_batch.deleted or with_deleted:
             yield item_batch
 
 
@@ -204,7 +204,7 @@ def update_item_type(id_, **kwargs):
         return None
 
 def update_item_batch(id_, **kwargs):
-    """ Updates in db name/item_model/manufacturer/unit_of_measure
+    """ Updates in db quantity/warehouse/supplier/item_type
     of an item_batch with given *id_* and returns it.
     Returns None if at least one of argument's name does not match object's
     fields."""

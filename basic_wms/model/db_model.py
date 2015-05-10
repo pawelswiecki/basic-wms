@@ -180,7 +180,7 @@ class ItemBatch(db.Model):
 
     _id = db.Column(db.Integer, primary_key=True, nullable=False)
     _quantity = db.Column(db.Integer, nullable=False)
-    # _deleted = db.Column(db.Boolean, nullable=False)
+    _deleted = db.Column(db.Boolean, nullable=False)
    
     _warehouse_id = db.Column(db.Integer, db.ForeignKey("warehouse._id"),
                               nullable=False)
