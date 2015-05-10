@@ -11,6 +11,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///model/' + DB_FILENAME
 # app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
+
 class CommonFieldsSQLA():
     """
     Here *_id* and *_deleted*, fields common to all ORM objects,
@@ -33,6 +34,7 @@ class CommonFieldsSQLA():
     @deleted.setter
     def deleted(self, value):
         self._deleted = value
+
 
 class WarehouseSQLA(db.Model, CommonFieldsSQLA):
     __tablename__ = 'warehouse'

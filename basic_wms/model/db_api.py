@@ -12,6 +12,7 @@ from basic_wms.model import db_model
                                   #  CREATE  #
                                   ############
 
+
 def new_warehouse(**kwargs):
     """
     Adds new warehouse to db and returns it,
@@ -24,6 +25,7 @@ def new_warehouse(**kwargs):
         return entity
     else:
         return None
+
 
 def new_supplier(**kwargs):
     """
@@ -38,6 +40,7 @@ def new_supplier(**kwargs):
     else:
         return None
 
+
 def new_item_type(**kwargs):
     """
     Adds new item_type to db and returns it,
@@ -50,6 +53,7 @@ def new_item_type(**kwargs):
         return entity
     else:
         return None
+
 
 def new_item_batch(**kwargs):
     """
@@ -81,6 +85,7 @@ def get_warehouse(id_):
     else:
         return None
 
+
 def get_supplier(id_):
     """
     Returns individual supplier with given *id*
@@ -91,6 +96,7 @@ def get_supplier(id_):
         return query1.one()
     else:
         return None
+
 
 def get_item_type(id_):
     """
@@ -103,6 +109,7 @@ def get_item_type(id_):
     else:
         return None
 
+
 def get_item_batch(id_):
     """
     Returns individual item_batch with given *id*
@@ -114,6 +121,7 @@ def get_item_batch(id_):
     else:
         return None
 
+
 # group getters
 def get_warehouses(with_deleted=False):
     """ Yields all warehouses."""
@@ -122,6 +130,7 @@ def get_warehouses(with_deleted=False):
         if not warehouse.deleted or with_deleted:
             yield warehouse
 
+
 def get_suppliers(with_deleted=False):
     """ Yields all suppliers."""
     suppliers = db_model.SupplierSQLA.query.all()
@@ -129,12 +138,14 @@ def get_suppliers(with_deleted=False):
         if not supplier.deleted or with_deleted:
             yield supplier
 
+
 def get_item_types(with_deleted=False):
     """ Yields all item_types."""
     item_types = db_model.ItemTypeSQLA.query.all()
     for item_type in item_types:
         if not item_type.deleted or with_deleted:
             yield item_type
+
 
 def get_item_batches(with_deleted=False):
     """ Yields all item_batches."""
@@ -167,6 +178,7 @@ def update_warehouse(id_, **kwargs):
     else:
         return None
 
+
 def update_supplier(id_, **kwargs):
     """ Updates in db VATIN/name/location of a supplier with given *id_*
     and returns it.
@@ -185,6 +197,7 @@ def update_supplier(id_, **kwargs):
     else:
         return None
 
+
 def update_item_type(id_, **kwargs):
     """ Updates in db name/item_model/manufacturer/unit_of_measure
     of an item_type with given *id_* and returns it.
@@ -202,6 +215,7 @@ def update_item_type(id_, **kwargs):
         return entity
     else:
         return None
+
 
 def update_item_batch(id_, **kwargs):
     """ Updates in db quantity/warehouse/supplier/item_type
@@ -240,6 +254,7 @@ def delete_warehouse(id_):
     else:
         return False
 
+
 def undelete_warehouse(id_):
     """
     Marks warehouse with given *id* as not deleted. 
@@ -269,6 +284,7 @@ def delete_supplier(id_):
     else:
         return False
 
+
 def undelete_supplier(id_):
     """
     Marks supplier with given *id* as not deleted. 
@@ -282,6 +298,7 @@ def undelete_supplier(id_):
         return True
     else:
         return False
+
 
 def delete_item_type(id_):
     """
@@ -297,6 +314,7 @@ def delete_item_type(id_):
     else:
         return False
 
+
 def undelete_item_type(id_):
     """
     Marks item_type with given *id* as not deleted. 
@@ -311,6 +329,7 @@ def undelete_item_type(id_):
     else:
         return False
 
+
 def delete_item_batch(id_):
     """
     Marks item_batch with given *id* as deleted. 
@@ -324,6 +343,7 @@ def delete_item_batch(id_):
         return True
     else:
         return False
+
 
 def undelete_item_batch(id_):
     """
