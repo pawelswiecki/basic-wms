@@ -11,15 +11,25 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///model/' + DB_FILENAME
 # app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
-class Warehouse(db.Model):
+class CommonFields():
+    """
+    Here *_id* and *_deleted*, fields common to all ORM objects,
+    are created.
+    """
+    _id = db.Column(db.Integer, primary_key=True, nullable=False)
+    _deleted = db.Column(db.Boolean, nullable=False)
+
+    def init_common_fileds(self):
+        self._deleted = False
+
+class Warehouse(db.Model, CommonFields):
     __tablename__ = 'warehouse'
 
-    _id = db.Column(db.Integer, primary_key=True, nullable=False)
     _name = db.Column(db.String(80), unique=True, nullable=False)
-    _location = db.Column(db.String(120), nullable=False)
-    _deleted = db.Column(db.Boolean, nullable=False)
+    _location = db.Column(db.String(120), nullable=False)    
     
     def __init__(self, name, location):
+        self.init_common_fileds()
         self._name = name
         self._location = location
         self._deleted = False
@@ -56,17 +66,16 @@ class Warehouse(db.Model):
         self._deleted = value
 
 
-class ItemType(db.Model):
-    __tablename__ = 'item_type'
+class ItemType(db.Model, CommonFields):
+    __tablename__ = 'item_type'    
     
-    _id = db.Column(db.Integer, primary_key=True, nullable=False)
     _name = db.Column(db.String(45), nullable=False)
     _item_model = db.Column(db.String(45), nullable=False)
     _manufacturer = db.Column(db.String(45), nullable=False)
-    _unit_of_measure = db.Column(db.String(45), nullable=False)
-    _deleted = db.Column(db.Boolean, nullable=False)
+    _unit_of_measure = db.Column(db.String(45), nullable=False)    
 
     def __init__(self, name, item_model, manufacturer, unit_of_measure):
+        self.init_common_fileds()
         self._name = name
         self._item_model = item_model
         self._manufacturer = manufacturer
@@ -119,17 +128,16 @@ class ItemType(db.Model):
         self._deleted = value
     
 
-class Supplier(db.Model):
-    __tablename__ = 'supplier'
+class Supplier(db.Model, CommonFields):
+    __tablename__ = 'supplier'    
     
-    _id = db.Column(db.Integer, primary_key=True, nullable=False)
     # VAT identification number (NIP in Poland)
     _VATIN = db.Column(db.String(45), nullable=False, unique=True)
     _name = db.Column(db.String(45), nullable=False)
-    _location = db.Column(db.String(45), nullable=False)
-    _deleted = db.Column(db.Boolean, nullable=False)
+    _location = db.Column(db.String(45), nullable=False)    
 
     def __init__(self, VATIN, name, location):
+        self.init_common_fileds()
         self._VATIN = VATIN
         self._name = name
         self._location = location
@@ -175,12 +183,10 @@ class Supplier(db.Model):
     
     
 
-class ItemBatch(db.Model):
+class ItemBatch(db.Model, CommonFields):
     __tablename__ = 'item_batch'
-
-    _id = db.Column(db.Integer, primary_key=True, nullable=False)
-    _quantity = db.Column(db.Integer, nullable=False)
-    _deleted = db.Column(db.Boolean, nullable=False)
+    
+    _quantity = db.Column(db.Integer, nullable=False)    
    
     _warehouse_id = db.Column(db.Integer, db.ForeignKey("warehouse._id"),
                               nullable=False)
@@ -201,6 +207,7 @@ class ItemBatch(db.Model):
                                                    lazy="dynamic"))
 
     def __init__(self, quantity, warehouse, supplier, item_type):
+        self.init_common_fileds()
         self._quantity = quantity
         self._warehouse = warehouse
         self._supplier = supplier
