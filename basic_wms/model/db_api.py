@@ -9,6 +9,7 @@ from basic_wms.model import db_model
                                 #  WAREHOUSE  #
                                 ###############
 
+
 def new_warehouse(name, location):
     """ Adds new warehouse to db and returns it."""
     warehouse = db_model.WarehouseSQLA(name=name, location=location)
@@ -37,23 +38,24 @@ def get_warehouses(with_deleted=False):
             yield warehouse
 
 
-def update_warehouse(id_, **kwargs):
-    """ Updates in db name and/or location of a warehouse with given *id_*
+def update_warehouse(id_, name=None, location=None):
+    """
+    Updates in db name, location of a warehouse with given *id_*
     and returns it.
-    Returns None if at least one of argument's name does not match object's
-    fields."""
+    """
 
-    # checks if arguments in *kwargs* are indeed properties of Warehouse class
-    if all(key in property_list(db_model.WarehouseSQLA) for key in kwargs):
-        entity = get_warehouse(id_)
-        for key, value in kwargs.items():
+    # creating dictionary of all arguments, but *id_*
+    kwargs = locals()
+    kwargs.pop("id_")
+
+    entity = get_warehouse(id_)
+    for key, value in kwargs.items():
+        if value is not None:
             setattr(entity, key, value)
 
-        db_model.db.session.add(entity)
-        db_model.db.session.commit()
-        return entity
-    else:
-        return None
+    db_model.db.session.add(entity)
+    db_model.db.session.commit()
+    return entity
 
 
 def delete_warehouse(id_):
@@ -119,23 +121,24 @@ def get_suppliers(with_deleted=False):
             yield supplier
 
 
-def update_supplier(id_, **kwargs):
-    """ Updates in db VATIN/name/location of a supplier with given *id_*
+def update_supplier(id_, VATIN=None, name=None, location=None):
+    """
+    Updates in db VATIN/name/location of a supplier with given *id_*
     and returns it.
-    Returns None if at least one of argument's name does not match object's
-    fields."""
+    """
 
-    # checks if arguments in *kwargs* are indeed properties of Supplier class
-    if all(key in property_list(db_model.SupplierSQLA) for key in kwargs):
-        entity = get_supplier(id_)
-        for key, value in kwargs.items():
+    # creating dictionary of all arguments, but *id_*
+    kwargs = locals()
+    kwargs.pop("id_")
+
+    entity = get_supplier(id_)
+    for key, value in kwargs.items():
+        if value is not None:
             setattr(entity, key, value)
 
-        db_model.db.session.add(entity)
-        db_model.db.session.commit()
-        return entity
-    else:
-        return None
+    db_model.db.session.add(entity)
+    db_model.db.session.commit()
+    return entity
 
 
 def delete_supplier(id_):
@@ -203,23 +206,25 @@ def get_item_types(with_deleted=False):
             yield item_type
 
 
-def update_item_type(id_, **kwargs):
-    """ Updates in db name/item_model/manufacturer/unit_of_measure
+def update_item_type(id_, name=None, item_model=None, manufacturer=None,
+                     unit_of_measure=None):
+    """
+    Updates in db name/item_model/manufacturer/unit_of_measure
     of an item_type with given *id_* and returns it.
-    Returns None if at least one of argument's name does not match object's
-    fields."""
+    """
 
-    # checks if arguments in *kwargs* are indeed properties of ItemType class
-    if all(key in property_list(db_model.ItemTypeSQLA) for key in kwargs):
-        entity = get_item_type(id_)
-        for key, value in kwargs.items():
+    # creating dictionary of all arguments, but *id_*
+    kwargs = locals()
+    kwargs.pop("id_")
+
+    entity = get_item_type(id_)
+    for key, value in kwargs.items():
+        if value is not None:
             setattr(entity, key, value)
 
-        db_model.db.session.add(entity)
-        db_model.db.session.commit()
-        return entity
-    else:
-        return None
+    db_model.db.session.add(entity)
+    db_model.db.session.commit()
+    return entity
 
 
 def delete_item_type(id_):
@@ -285,23 +290,25 @@ def get_item_batches(with_deleted=False):
             yield item_batch
 
 
-def update_item_batch(id_, **kwargs):
-    """ Updates in db quantity/warehouse/supplier/item_type
+def update_item_batch(id_, quantity=None, warehouse=None, supplier=None,
+                      item_type=None):
+    """
+    Updates in db quantity/warehouse/supplier/item_type
     of an item_batch with given *id_* and returns it.
-    Returns None if at least one of argument's name does not match object's
-    fields."""
+    """
     
-    # checks if arguments in *kwargs* are indeed properties of ItemBatch class
-    if all(key in property_list(db_model.ItemBatchSQLA) for key in kwargs):
-        entity = get_item_batch(id_)
-        for key, value in kwargs.items():            
+    # creating dictionary of all arguments, but *id_*
+    kwargs = locals()
+    kwargs.pop("id_")
+
+    entity = get_item_batch(id_)
+    for key, value in kwargs.items():
+        if value is not None:
             setattr(entity, key, value)
 
-        db_model.db.session.add(entity)
-        db_model.db.session.commit()
-        return entity
-    else:
-        return None
+    db_model.db.session.add(entity)
+    db_model.db.session.commit()
+    return entity
 
 
 def delete_item_batch(id_):
@@ -332,17 +339,3 @@ def undelete_item_batch(id_):
         return True
     else:
         return False
-
-
-                                #############
-                                #  HELPERS  #
-                                #############
-
-
-def property_list(cls):
-    """
-    Return list of properties of *cls* class
-    (from: http://stackoverflow.com/questions/1215408).
-    """
-    return [name for (name, value) in
-            getmembers(cls, lambda v: isinstance(v, property))]
