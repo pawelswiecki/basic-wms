@@ -2,6 +2,9 @@ print(" # db_api.py")
 
 from basic_wms.model import db_model
 
+# TODO
+# - make that no ORM objects are leaking to user of this API
+
 
                                 ###############
                                 #  WAREHOUSE  #
@@ -274,8 +277,8 @@ class ItemTypeCRUD:
     def get_item_type(id_):
         """
         Returns dictionary with serialized object's fields:
-        {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
-         'location': str}.
+        {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
+         'manufacturer': str, 'unit_of_measure': str}.
         """
         return db_model.ItemTypeSQLA.get_item_type(id_).serialize
 
@@ -342,7 +345,7 @@ class ItemTypeCRUD:
                                 #  ITEM BATCH  #
                                 ################
 
-        
+
 class ItemBatchCRUD:
     def __init__(self, quantity, warehouse_id, supplier_id, item_type_id):
         """ Inits SupplierCRUD object and adds new supplier to db."""
@@ -405,8 +408,9 @@ class ItemBatchCRUD:
     @staticmethod
     def get_item_batch(id_):
         """
-        Returns individual item_batch with given *id*
-        or None if there is no such an item_type.
+        Returns dictionary with serialized object's fields:
+        {'id': int, 'deleted': bool, 'quantity': str,
+         'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
         """
         return db_model.ItemBatchSQLA.get_item_batch(id_)
 
