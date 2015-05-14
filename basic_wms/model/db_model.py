@@ -50,6 +50,25 @@ class WarehouseSQLA(db.Model, CommonFieldsSQLA):
     def __repr__(self):
         return self.__str__()
 
+    @staticmethod
+    def get_warehouse(id_):
+        """
+        Returns individual warehouse with given *id*
+        or None if there is no such a warehouse.
+        """
+        query1 = WarehouseSQLA.query.filter_by(_id=id_)
+        if query1.count() > 0:
+            return query1.one()
+        else:
+            return None
+
+    @staticmethod
+    def get_warehouses():
+        """ Yields all warehouses."""
+        warehouses = WarehouseSQLA.query.all()
+        for warehouse in warehouses:
+            yield warehouse
+
     def __str__(self):
         return "<Warehouse #{}>".format(self._id)
 
@@ -102,6 +121,25 @@ class ItemTypeSQLA(db.Model, CommonFieldsSQLA):
     def __str__(self):
         return "<ItemType #{}, name: {}>".format(self._id, self._name)
 
+    @staticmethod
+    def get_item_type(id_):
+        """
+        Returns individual item_type with given *id*
+        or None if there is no such an item_type.
+        """
+        query1 = ItemTypeSQLA.query.filter_by(_id=id_)
+        if query1.count() > 0:
+            return query1.one()
+        else:
+            return None
+
+    @staticmethod
+    def get_item_types():
+        """ Yields all item_types."""
+        item_types = ItemTypeSQLA.query.all()
+        for item_type in item_types:
+            yield item_type
+
     @property
     def name(self):
         return self._name
@@ -121,14 +159,30 @@ class ItemTypeSQLA(db.Model, CommonFieldsSQLA):
         return self._manufacturer
     @manufacturer.setter
     def manufacturer(self, value):
-        self._manufacturer = value    
+        self._manufacturer = value
     
     @property
     def unit_of_measure(self):
         return self._unit_of_measure
     @unit_of_measure.setter
     def unit_of_measure(self, value):
-        self._unit_of_measure = value    
+        self._unit_of_measure = value
+
+    @property
+    def serialize(self):
+        """
+        Returns dictionary with serialized object's fields:
+        {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
+         'manufacturer': str, 'unit_of_measure': str}.
+        """
+        return {
+            'id': self.id_,
+            'deleted': self.deleted,
+            'name': self.name,
+            'item_model': self.item_model,
+            'manufacturer': self.manufacturer,
+            'unit_of_measure': self.unit_of_measure
+        }
     
 
 class SupplierSQLA(db.Model, CommonFieldsSQLA):
@@ -151,6 +205,25 @@ class SupplierSQLA(db.Model, CommonFieldsSQLA):
     def __str__(self):
         return "<Supplier #{}, name: {}>".format(self._id, self._name)
 
+    @staticmethod
+    def get_supplier(id_):
+        """
+        Returns individual supplier with given *id*
+        or None if there is no such a supplier.
+        """
+        query1 = SupplierSQLA.query.filter_by(_id=id_)
+        if query1.count() > 0:
+            return query1.one()
+        else:
+            return None
+
+    @staticmethod
+    def get_suppliers():
+        """ Yields all suppliers."""
+        suppliers = SupplierSQLA.query.all()
+        for supplier in suppliers:
+            yield supplier
+
     @property
     def VATIN(self):
         return self._VATIN
@@ -170,7 +243,22 @@ class SupplierSQLA(db.Model, CommonFieldsSQLA):
         return self._location
     @location.setter
     def location(self, value):
-        self._location = value    
+        self._location = value
+
+    @property
+    def serialize(self):
+        """
+        Returns dictionary with serialized object's fields:
+        {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
+         'location': str}.
+        """
+        return {
+            'id': self.id_,
+            'deleted': self.deleted,
+            'VATIN': self.VATIN,
+            'name': self.name,
+            'location': self.location
+        }
     
 
 class ItemBatchSQLA(db.Model, CommonFieldsSQLA):
@@ -209,6 +297,25 @@ class ItemBatchSQLA(db.Model, CommonFieldsSQLA):
     def __str__(self):
         return "<ItemBatch #{}>".format(self._id)
 
+    @staticmethod
+    def get_item_batch(id_):
+        """
+        Returns individual item_batch with given *id*
+        or None if there is no such an item_type.
+        """
+        query1 = ItemBatchSQLA.query.filter_by(_id=id_)
+        if query1.count() > 0:
+            return query1.one()
+        else:
+            return None
+
+    @staticmethod
+    def get_item_batches():
+        """ Yields all item_batches."""
+        item_batches = ItemBatchSQLA.query.all()
+        for item_batch in item_batches:
+            yield item_batch
+
     @property
     def quantity(self):
         return self._quantity
@@ -236,6 +343,21 @@ class ItemBatchSQLA(db.Model, CommonFieldsSQLA):
     @item_type.setter
     def item_type(self, value):
         self._item_type = value
+
+    @property
+    def serialize(self):
+        """
+        Returns dictionary with serialized object's fields:
+        {'id': int, 'deleted': bool, 'quantity': str,
+         'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
+        """
+        return {
+            'id': self.id_,
+            'quantity': self.quantity,
+            'warehouse_id': self.warehouse.id_,
+            'supplier_id': self.supplier.id_,
+            'item_type_id': self.item_type.id_
+        }
     
 
 if __name__ == "__main__":

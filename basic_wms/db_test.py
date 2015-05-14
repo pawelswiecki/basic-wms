@@ -50,12 +50,12 @@ item_type3 = next(item_types)
 
 
 # print("adding batches:")
-batch1 = db_api.new_item_batch(quantity=150, warehouse=warehouse1, 
-                               supplier=supplier1, item_type=item_type1)
-batch2 = db_api.new_item_batch(quantity=56, warehouse=warehouse2, 
-                               supplier=supplier2, item_type=item_type2)
-batch3 = db_api.new_item_batch(quantity=566, warehouse=warehouse3, 
-                               supplier=supplier3, item_type=item_type3)
+batch1 = db_api.new_item_batch(quantity=150, warehouse_id=1,
+                               supplier_id=1, item_type_id=1)
+batch2 = db_api.new_item_batch(quantity=56, warehouse_id=2,
+                               supplier_id=2, item_type_id=2)
+batch3 = db_api.new_item_batch(quantity=566, warehouse_id=3,
+                               supplier_id=3, item_type_id=3)
 
 print("  #01", batch1.supplier.id_ == 1)
 print("  #02", batch2.supplier.id_ == 2)
@@ -74,13 +74,13 @@ warehouses = db_api.WarehouseCRUD.get_warehouses()
 warehouse1 = next(warehouses)
 warehouse1_id = warehouse1.id_
 print("  #10", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, name="Frank") is not None)
-print("  #11", db_api.WarehouseCRUD.get_warehouse(warehouse1_id).name == "Frank")
+print("  #11", db_api.WarehouseCRUD.get_warehouse(warehouse1_id)['name'] == "Frank")
 print("  #12", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, location="new address") is not None)
-print("  #13", db_api.WarehouseCRUD.get_warehouse(warehouse1_id).location == "new address")
+print("  #13", db_api.WarehouseCRUD.get_warehouse(warehouse1_id)['location'] == "new address")
 
 print("  #14", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, name="Bob", location="newer address") is not None)
-print("  #15", db_api.WarehouseCRUD.get_warehouse(warehouse1_id).location == "newer address")
-print("  #16", db_api.WarehouseCRUD.get_warehouse(warehouse1_id).name == "Bob")
+print("  #15", db_api.WarehouseCRUD.get_warehouse(warehouse1_id)['location'] == "newer address")
+print("  #16", db_api.WarehouseCRUD.get_warehouse(warehouse1_id)['name'] == "Bob")
 
 
 # print("updating supplier:")
@@ -88,9 +88,9 @@ suppliers = db_api.get_suppliers()
 supplier1 = next(suppliers)
 supplier1_id = supplier1.id_
 print("  #17", db_api.update_supplier(supplier1_id, VATIN="000000") is not None)
-print("  #18", db_api.get_supplier(supplier1_id).VATIN == "000000")
+print("  #18", db_api.get_supplier(supplier1_id)['VATIN'] == "000000")
 print("  #19", db_api.update_supplier(supplier1_id, name="New Name of the Company") is not None)
-print("  #20", db_api.get_supplier(supplier1_id).name == "New Name of the Company")
+print("  #20", db_api.get_supplier(supplier1_id)['name'] == "New Name of the Company")
 
 # print("updating item type:")
 item_types = db_api.get_item_types()
@@ -98,9 +98,9 @@ item_type1 = next(item_types)
 item_type1_id = item_type1.id_
 print("  #21", db_api.update_item_type(item_type1_id, name="mouse", item_model="1001",
                               manufacturer="Logitech") is not None)
-print("  #22", db_api.get_item_type(item_type1_id).name == "mouse")
-print("  #23", db_api.get_item_type(item_type1_id).item_model == "1001")
-print("  #24", db_api.get_item_type(item_type1_id).manufacturer == "Logitech")
+print("  #22", db_api.get_item_type(item_type1_id)['name'] == "mouse")
+print("  #23", db_api.get_item_type(item_type1_id)['item_model'] == "1001")
+print("  #24", db_api.get_item_type(item_type1_id)['manufacturer'] == "Logitech")
 
 
 # print("updating item batch:")

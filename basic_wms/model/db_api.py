@@ -1,7 +1,5 @@
 print(" # db_api.py")
 
-from collections import namedtuple
-
 from basic_wms.model import db_model
 
 
@@ -43,19 +41,15 @@ class WarehouseCRUD:
     @staticmethod
     def get_warehouse(id_):
         """
-        Returns individual warehouse with given *id*
-        or None if there is no such a warehouse.
+        Returns dictionary with data about warehouse with *id_* id:
+        {'id': int, 'deleted': bool, 'name': str, 'location': str}.
         """
-        query1 = db_model.WarehouseSQLA.query.filter_by(_id=id_)
-        if query1.count() > 0:
-            return query1.one()
-        else:
-            return None
+        return db_model.WarehouseSQLA.get_warehouse(id_).serialize
 
     @staticmethod
     def get_warehouses(with_deleted=False):
         """ Yields all warehouses."""
-        warehouses = db_model.WarehouseSQLA.query.all()
+        warehouses = db_model.WarehouseSQLA.get_warehouses()
         for warehouse in warehouses:
             if not warehouse.deleted or with_deleted:
                 yield warehouse
@@ -70,7 +64,7 @@ class WarehouseCRUD:
         kwargs = locals()
         kwargs.pop("id_")
 
-        entity = WarehouseCRUD.get_warehouse(id_)
+        entity = db_model.WarehouseSQLA.get_warehouse(id_)
         for key, value in kwargs.items():
             if value is not None:
                 setattr(entity, key, value)
@@ -85,7 +79,7 @@ class WarehouseCRUD:
         Marks warehouse with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        warehouse = WarehouseCRUD.get_warehouse(id_=id_)
+        warehouse = db_model.WarehouseSQLA.get_warehouse(id_=id_)
         if not warehouse.deleted:
             warehouse.deleted = True
             db_model.db.session.add(warehouse)
@@ -100,7 +94,7 @@ class WarehouseCRUD:
         Marks warehouse with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        warehouse = WarehouseCRUD.get_warehouse(id_=id_)
+        warehouse = db_model.WarehouseSQLA.get_warehouse(id_=id_)
         if warehouse.deleted:
             warehouse.deleted = False
             db_model.db.session.add(warehouse)
@@ -125,19 +119,16 @@ def new_supplier(VATIN, name, location):
 
 def get_supplier(id_):
     """
-    Returns individual supplier with given *id*
-    or None if there is no such a supplier.
+    Returns dictionary with serialized object's fields:
+    {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
+     'location': str}.
     """
-    query1 = db_model.SupplierSQLA.query.filter_by(_id=id_)
-    if query1.count() > 0:
-        return query1.one()
-    else:
-        return None
+    return db_model.SupplierSQLA.get_supplier(id_).serialize
 
 
 def get_suppliers(with_deleted=False):
     """ Yields all suppliers."""
-    suppliers = db_model.SupplierSQLA.query.all()
+    suppliers = db_model.SupplierSQLA.get_suppliers()
     for supplier in suppliers:
         if not supplier.deleted or with_deleted:
             yield supplier
@@ -153,7 +144,7 @@ def update_supplier(id_, VATIN=None, name=None, location=None):
     kwargs = locals()
     kwargs.pop("id_")
 
-    entity = get_supplier(id_)
+    entity = db_model.SupplierSQLA.get_supplier(id_)
     for key, value in kwargs.items():
         if value is not None:
             setattr(entity, key, value)
@@ -168,7 +159,7 @@ def delete_supplier(id_):
     Marks supplier with given *id* as deleted.
     Returns True if successful, False if it was already deleted.
     """
-    supplier = get_supplier(id_=id_)
+    supplier = db_model.SupplierSQLA.get_supplier(id_=id_)
     if not supplier.deleted:
         supplier.deleted = True
         db_model.db.session.add(supplier)
@@ -183,7 +174,7 @@ def undelete_supplier(id_):
     Marks supplier with given *id* as not deleted.
     Returns True if successful, False if it wasn't deleted.
     """
-    supplier = get_supplier(id_=id_)
+    supplier = db_model.SupplierSQLA.get_supplier(id_=id_)
     if supplier.deleted:
         supplier.deleted = False
         db_model.db.session.add(supplier)
@@ -210,19 +201,16 @@ def new_item_type(name, item_model, manufacturer, unit_of_measure):
 
 def get_item_type(id_):
     """
-    Returns individual item_type with given *id*
-    or None if there is no such an item_type.
+    Returns dictionary with serialized object's fields:
+    {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
+     'location': str}.
     """
-    query1 = db_model.ItemTypeSQLA.query.filter_by(_id=id_)
-    if query1.count() > 0:
-        return query1.one()
-    else:
-        return None
+    return db_model.ItemTypeSQLA.get_item_type(id_).serialize
 
 
 def get_item_types(with_deleted=False):
     """ Yields all item_types."""
-    item_types = db_model.ItemTypeSQLA.query.all()
+    item_types = db_model.ItemTypeSQLA.get_item_types()
     for item_type in item_types:
         if not item_type.deleted or with_deleted:
             yield item_type
@@ -239,7 +227,7 @@ def update_item_type(id_, name=None, item_model=None, manufacturer=None,
     kwargs = locals()
     kwargs.pop("id_")
 
-    entity = get_item_type(id_)
+    entity = db_model.ItemTypeSQLA.get_item_type(id_)
     for key, value in kwargs.items():
         if value is not None:
             setattr(entity, key, value)
@@ -254,7 +242,7 @@ def delete_item_type(id_):
     Marks item_type with given *id* as deleted.
     Returns True if successful, False if it was already deleted.
     """
-    item_type = get_item_type(id_=id_)
+    item_type = db_model.ItemTypeSQLA.get_item_type(id_=id_)
     if not item_type.deleted:
         item_type.deleted = True
         db_model.db.session.add(item_type)
@@ -269,7 +257,7 @@ def undelete_item_type(id_):
     Marks item_type with given *id* as not deleted.
     Returns True if successful, False if it wasn't deleted.
     """
-    item_type = get_item_type(id_=id_)
+    item_type = db_model.ItemTypeSQLA.get_item_type(id_=id_)
     if item_type.deleted:
         item_type.deleted = False
         db_model.db.session.add(item_type)
@@ -283,8 +271,12 @@ def undelete_item_type(id_):
                                 ################
 
 
-def new_item_batch(quantity, warehouse, supplier, item_type):
+def new_item_batch(quantity, warehouse_id, supplier_id, item_type_id):
     """ Adds new item batch to db and returns it."""
+    warehouse = db_model.WarehouseSQLA.get_warehouse(warehouse_id)
+    supplier = db_model.SupplierSQLA.get_supplier(supplier_id)
+    item_type = db_model.ItemTypeSQLA.get_item_type(item_type_id)
+
     item_batch = db_model.ItemBatchSQLA(quantity=quantity, warehouse=warehouse,
                                     supplier=supplier, item_type=item_type)
     db_model.db.session.add(item_batch)
@@ -297,16 +289,12 @@ def get_item_batch(id_):
     Returns individual item_batch with given *id*
     or None if there is no such an item_type.
     """
-    query1 = db_model.ItemBatchSQLA.query.filter_by(_id=id_)
-    if query1.count() > 0:
-        return query1.one()
-    else:
-        return None
+    return db_model.ItemBatchSQLA.get_item_batch(id_)
 
 
 def get_item_batches(with_deleted=False):
     """ Yields all item_batches."""
-    item_batches = db_model.ItemBatchSQLA.query.all()
+    item_batches = db_model.ItemBatchSQLA.get_item_batches()
     for item_batch in item_batches:
         if not item_batch.deleted or with_deleted:
             yield item_batch
