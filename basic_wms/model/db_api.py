@@ -219,82 +219,124 @@ class SupplierCRUD:
                                 ###############
 
 
-def new_item_type(name, item_model, manufacturer, unit_of_measure):
-    """ Adds new item type to db and returns it."""
-    item_type = db_model.ItemTypeSQLA(name=name, item_model=item_model,
-                                  manufacturer=manufacturer,
-                                  unit_of_measure=unit_of_measure)
-    db_model.db.session.add(item_type)
-    db_model.db.session.commit()
-    return item_type
+class ItemTypeCRUD:
+    def __init__(self, name, item_model, manufacturer, unit_of_measure):
+        """ Inits SupplierCRUD object and adds new supplier to db."""
+        self._name = name
+        assert isinstance(self._name, str), 'name should be a string'
 
+        self._item_model= item_model
+        assert isinstance(self._item_model, str),\
+            'item_model should be a string'
 
-def get_item_type(id_):
-    """
-    Returns dictionary with serialized object's fields:
-    {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
-     'location': str}.
-    """
-    return db_model.ItemTypeSQLA.get_item_type(id_).serialize
+        self._manufacturer = manufacturer
+        assert isinstance(self._manufacturer, str),\
+            'manufacturer should be a string'
 
+        self._unit_of_measure = unit_of_measure
+        assert isinstance(self._unit_of_measure, str),\
+            'unit_of_measure should be a string'
 
-def get_item_types(with_deleted=False):
-    """ Yields all item_types."""
-    item_types = db_model.ItemTypeSQLA.get_item_types()
-    for item_type in item_types:
-        if not item_type.deleted or with_deleted:
-            yield item_type
+        self._id = self.create(self._name, self._item_model, self._manufacturer,
+                               self._unit_of_measure)
 
+    @property
+    def name(self):
+        return self._name
 
-def update_item_type(id_, name=None, item_model=None, manufacturer=None,
-                     unit_of_measure=None):
-    """
-    Updates in db name/item_model/manufacturer/unit_of_measure
-    of an item_type with given *id_* and returns it.
-    """
+    @property
+    def item_model(self):
+        return self._item_model
 
-    # creating dictionary of all arguments, but *id_*
-    kwargs = locals()
-    kwargs.pop("id_")
+    @property
+    def manufacturer(self):
+        return self._manufacturer
 
-    entity = db_model.ItemTypeSQLA.get_item_type(id_)
-    for key, value in kwargs.items():
-        if value is not None:
-            setattr(entity, key, value)
+    @property
+    def unit_of_measure(self):
+        return self._unit_of_measure
 
-    db_model.db.session.add(entity)
-    db_model.db.session.commit()
-    return entity
+    @property
+    def id_(self):
+        return self._id
 
-
-def delete_item_type(id_):
-    """
-    Marks item_type with given *id* as deleted.
-    Returns True if successful, False if it was already deleted.
-    """
-    item_type = db_model.ItemTypeSQLA.get_item_type(id_=id_)
-    if not item_type.deleted:
-        item_type.deleted = True
+    @staticmethod
+    def create(name, item_model, manufacturer, unit_of_measure):
+        """ Adds new item type to db and returns it."""
+        item_type = db_model.ItemTypeSQLA(name=name, item_model=item_model,
+                                          manufacturer=manufacturer,
+                                          unit_of_measure=unit_of_measure)
         db_model.db.session.add(item_type)
         db_model.db.session.commit()
-        return True
-    else:
-        return False
+        return item_type.id_
 
+    @staticmethod
+    def get_item_type(id_):
+        """
+        Returns dictionary with serialized object's fields:
+        {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
+         'location': str}.
+        """
+        return db_model.ItemTypeSQLA.get_item_type(id_).serialize
 
-def undelete_item_type(id_):
-    """
-    Marks item_type with given *id* as not deleted.
-    Returns True if successful, False if it wasn't deleted.
-    """
-    item_type = db_model.ItemTypeSQLA.get_item_type(id_=id_)
-    if item_type.deleted:
-        item_type.deleted = False
-        db_model.db.session.add(item_type)
+    @staticmethod
+    def get_item_types(with_deleted=False):
+        """ Yields all item_types."""
+        item_types = db_model.ItemTypeSQLA.get_item_types()
+        for item_type in item_types:
+            if not item_type.deleted or with_deleted:
+                yield item_type
+
+    @staticmethod
+    def update_item_type(id_, name=None, item_model=None, manufacturer=None,
+                         unit_of_measure=None):
+        """
+        Updates in db name/item_model/manufacturer/unit_of_measure
+        of an item_type with given *id_* and returns it.
+        """
+
+        # creating dictionary of all arguments, but *id_*
+        kwargs = locals()
+        kwargs.pop("id_")
+
+        entity = db_model.ItemTypeSQLA.get_item_type(id_)
+        for key, value in kwargs.items():
+            if value is not None:
+                setattr(entity, key, value)
+
+        db_model.db.session.add(entity)
         db_model.db.session.commit()
-        return True
-    else:
-        return False
+        return entity
+
+    @staticmethod
+    def delete_item_type(id_):
+        """
+        Marks item_type with given *id* as deleted.
+        Returns True if successful, False if it was already deleted.
+        """
+        item_type = db_model.ItemTypeSQLA.get_item_type(id_=id_)
+        if not item_type.deleted:
+            item_type.deleted = True
+            db_model.db.session.add(item_type)
+            db_model.db.session.commit()
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def undelete_item_type(id_):
+        """
+        Marks item_type with given *id* as not deleted.
+        Returns True if successful, False if it wasn't deleted.
+        """
+        item_type = db_model.ItemTypeSQLA.get_item_type(id_=id_)
+        if item_type.deleted:
+            item_type.deleted = False
+            db_model.db.session.add(item_type)
+            db_model.db.session.commit()
+            return True
+        else:
+            return False
 
                                 ################
                                 #  ITEM BATCH  #

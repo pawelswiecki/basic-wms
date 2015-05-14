@@ -25,12 +25,9 @@ print("  #ba", db_api.SupplierCRUD(VATIN="1234-5456-444", name="Company 1", loca
 print("  #bb", db_api.SupplierCRUD(VATIN="9695-3766-333", name="Company 2", location="address Y").id_ == 2)
 print("  #bc", db_api.SupplierCRUD(VATIN="1010-2020-030", name="Company 3", location="address Z").id_ == 3)
 
-db_api.new_item_type(name="keyboard", item_model="X-PRO 2", manufacturer="HiTex",
-                     unit_of_measure="EA")
-db_api.new_item_type(name="cell phone", item_model="3310", manufacturer="Nokia",
-                     unit_of_measure="EA")
-db_api.new_item_type(name="water", item_model="fresh", manufacturer="Coca-Cola",
-                     unit_of_measure="liter")
+print("  #ca", db_api.ItemTypeCRUD(name="keyboard", item_model="X-PRO 2", manufacturer="HiTex", unit_of_measure="EA").id_ == 1)
+print("  #cb", db_api.ItemTypeCRUD(name="cell phone", item_model="3310", manufacturer="Nokia", unit_of_measure="EA").id_ == 2)
+print("  #cc", db_api.ItemTypeCRUD(name="water", item_model="fresh", manufacturer="Coca-Cola", unit_of_measure="liter").id_ == 3)
 
 
 warehouses = db_api.WarehouseCRUD.get_warehouses()
@@ -43,7 +40,7 @@ supplier1 = next(suppliers)
 supplier2 = next(suppliers)
 supplier3 = next(suppliers)
 
-item_types = db_api.get_item_types()
+item_types = db_api.ItemTypeCRUD.get_item_types()
 item_type1 = next(item_types)
 item_type2 = next(item_types)
 item_type3 = next(item_types)
@@ -93,21 +90,21 @@ print("  #19", db_api.SupplierCRUD.update_supplier(supplier1_id, name="New Name 
 print("  #20", db_api.SupplierCRUD.get_supplier(supplier1_id)['name'] == "New Name of the Company")
 
 # print("updating item type:")
-item_types = db_api.get_item_types()
+item_types = db_api.ItemTypeCRUD.get_item_types()
 item_type1 = next(item_types)
 item_type1_id = item_type1.id_
-print("  #21", db_api.update_item_type(item_type1_id, name="mouse", item_model="1001",
+print("  #21", db_api.ItemTypeCRUD.update_item_type(item_type1_id, name="mouse", item_model="1001",
                               manufacturer="Logitech") is not None)
-print("  #22", db_api.get_item_type(item_type1_id)['name'] == "mouse")
-print("  #23", db_api.get_item_type(item_type1_id)['item_model'] == "1001")
-print("  #24", db_api.get_item_type(item_type1_id)['manufacturer'] == "Logitech")
+print("  #22", db_api.ItemTypeCRUD.get_item_type(item_type1_id)['name'] == "mouse")
+print("  #23", db_api.ItemTypeCRUD.get_item_type(item_type1_id)['item_model'] == "1001")
+print("  #24", db_api.ItemTypeCRUD.get_item_type(item_type1_id)['manufacturer'] == "Logitech")
 
 
 # print("updating item batch:")
 item_batches = db_api.get_item_batches()
 item_batch1 = next(item_batches)
 
-item_types = db_api.get_item_types()
+item_types = db_api.ItemTypeCRUD.get_item_types()
 next(item_types)
 item_type2 = next(item_types)
 
@@ -140,12 +137,12 @@ print("  #35", db_api.delete_item_batch(item_batch1.id_) == False)
 db_api.undelete_item_batch(item_batch1.id_)
 print("  #36", db_api.delete_item_batch(item_batch1.id_) == True)
 
-print("  #37", (item_type2.id_ in [x.id_ for x in db_api.get_item_types()]) == True)
-print("  #38", db_api.delete_item_type(item_type2.id_) == True)
-print("  #39", (item_type2.id_ in [x.id_ for x in db_api.get_item_types()]) == False)
-print("  #40", db_api.delete_item_type(item_type2.id_) == False)
-db_api.undelete_item_type(item_type2.id_)
-print("  #41", db_api.delete_item_type(item_type2.id_) == True)
+print("  #37", (item_type2.id_ in [x.id_ for x in db_api.ItemTypeCRUD.get_item_types()]) == True)
+print("  #38", db_api.ItemTypeCRUD.delete_item_type(item_type2.id_) == True)
+print("  #39", (item_type2.id_ in [x.id_ for x in db_api.ItemTypeCRUD.get_item_types()]) == False)
+print("  #40", db_api.ItemTypeCRUD.delete_item_type(item_type2.id_) == False)
+db_api.ItemTypeCRUD.undelete_item_type(item_type2.id_)
+print("  #41", db_api.ItemTypeCRUD.delete_item_type(item_type2.id_) == True)
 
 print("  #42", (supplier2.id_ in [x.id_ for x in db_api.SupplierCRUD.get_suppliers()]) == True)
 print("  #43", db_api.SupplierCRUD.delete_supplier(supplier2.id_) == True)
