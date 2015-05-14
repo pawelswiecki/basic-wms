@@ -14,9 +14,12 @@ except FileNotFoundError:
 
 db_model.db.create_all()
 
-db_api.new_warehouse(name="Warehouse 1", location="address123")
-db_api.new_warehouse(name="Warehouse 2", location="address314")
-db_api.new_warehouse(name="Warehouse 3", location="address4321")
+print()
+print("TESTS")
+
+print("  #aa", db_api.WarehouseCRUD(name="Warehouse 1", location="address123").id_ == 1)
+print("  #ab", db_api.WarehouseCRUD(name="Warehouse 2", location="address314").id_ == 2)
+print("  #ac", db_api.WarehouseCRUD(name="Warehouse 3", location="address4321").id_ == 3)
 
 db_api.new_supplier(VATIN="1234-5456-444", name="Company 1", location="address X")
 db_api.new_supplier(VATIN="9695-3766-333", name="Company 2", location="address Y")
@@ -30,7 +33,7 @@ db_api.new_item_type(name="water", item_model="fresh", manufacturer="Coca-Cola",
                      unit_of_measure="liter")
 
 
-warehouses = db_api.get_warehouses()
+warehouses = db_api.WarehouseCRUD.get_warehouses()
 warehouse1 = next(warehouses)
 warehouse2 = next(warehouses)
 warehouse3 = next(warehouses)
@@ -45,8 +48,7 @@ item_type1 = next(item_types)
 item_type2 = next(item_types)
 item_type3 = next(item_types)
 
-print()
-print("TESTS")
+
 # print("adding batches:")
 batch1 = db_api.new_item_batch(quantity=150, warehouse=warehouse1, 
                                supplier=supplier1, item_type=item_type1)
@@ -68,17 +70,17 @@ print("  #08", batch2.item_type.id_ == 2)
 print("  #09", batch3.item_type.id_ == 3)
 
 # print("updating warehouse:")
-warehouses = db_api.get_warehouses()
+warehouses = db_api.WarehouseCRUD.get_warehouses()
 warehouse1 = next(warehouses)
 warehouse1_id = warehouse1.id_
-print("  #10", db_api.update_warehouse(warehouse1_id, name="Frank") is not None)
-print("  #11", db_api.get_warehouse(warehouse1_id).name == "Frank")
-print("  #12", db_api.update_warehouse(warehouse1_id, location="new address") is not None)
-print("  #13", db_api.get_warehouse(warehouse1_id).location == "new address")
+print("  #10", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, name="Frank") is not None)
+print("  #11", db_api.WarehouseCRUD.get_warehouse(warehouse1_id).name == "Frank")
+print("  #12", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, location="new address") is not None)
+print("  #13", db_api.WarehouseCRUD.get_warehouse(warehouse1_id).location == "new address")
 
-print("  #14", db_api.update_warehouse(warehouse1_id, name="Bob", location="newer address") is not None)
-print("  #15", db_api.get_warehouse(warehouse1_id).location == "newer address")
-print("  #16", db_api.get_warehouse(warehouse1_id).name == "Bob")
+print("  #14", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, name="Bob", location="newer address") is not None)
+print("  #15", db_api.WarehouseCRUD.get_warehouse(warehouse1_id).location == "newer address")
+print("  #16", db_api.WarehouseCRUD.get_warehouse(warehouse1_id).name == "Bob")
 
 
 # print("updating supplier:")
@@ -113,7 +115,7 @@ suppliers = db_api.get_suppliers()
 next(suppliers)
 supplier2 = next(suppliers)
 
-warehouses = db_api.get_warehouses()
+warehouses = db_api.WarehouseCRUD.get_warehouses()
 next(warehouses)
 warehouse2 = next(warehouses)
 
@@ -152,9 +154,9 @@ print("  #45", db_api.delete_supplier(supplier2.id_) == False)
 db_api.undelete_supplier(supplier2.id_)
 print("  #46", db_api.delete_supplier(supplier2.id_) == True)
 
-print("  #47", (warehouse2.id_ in [x.id_ for x in db_api.get_warehouses()]) == True)
-print("  #48", db_api.delete_warehouse(warehouse2.id_) == True)
-print("  #49", (warehouse2.id_ in [x.id_ for x in db_api.get_warehouses()]) == False)
-print("  #50", db_api.delete_warehouse(warehouse2.id_) == False)
-db_api.undelete_warehouse(warehouse2.id_)
-print("  #51", db_api.delete_warehouse(warehouse2.id_) == True)
+print("  #47", (warehouse2.id_ in [x.id_ for x in db_api.WarehouseCRUD.get_warehouses()]) == True)
+print("  #48", db_api.WarehouseCRUD.delete_warehouse(warehouse2.id_) == True)
+print("  #49", (warehouse2.id_ in [x.id_ for x in db_api.WarehouseCRUD.get_warehouses()]) == False)
+print("  #50", db_api.WarehouseCRUD.delete_warehouse(warehouse2.id_) == False)
+db_api.WarehouseCRUD.undelete_warehouse(warehouse2.id_)
+print("  #51", db_api.WarehouseCRUD.delete_warehouse(warehouse2.id_) == True)

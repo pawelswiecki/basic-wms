@@ -65,7 +65,20 @@ class WarehouseSQLA(db.Model, CommonFieldsSQLA):
         return self._location
     @location.setter
     def location(self, value):
-        self._location = value    
+        self._location = value
+
+    @property
+    def serialize(self):
+        """
+        Returns dictionary with serialized object's fields:
+        {'id': int, 'deleted': bool, 'name': str, 'location': str}.
+        """
+        return {
+            'id': self.id_,
+            'deleted': self.deleted,
+            'name': self.name,
+            'location': self.location,
+        }
 
 
 class ItemTypeSQLA(db.Model, CommonFieldsSQLA):

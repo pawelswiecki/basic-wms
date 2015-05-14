@@ -1,6 +1,6 @@
 print(" # db_api.py")
 
-from inspect import getmembers
+from collections import namedtuple
 
 from basic_wms.model import db_model
 
@@ -9,83 +9,105 @@ from basic_wms.model import db_model
                                 #  WAREHOUSE  #
                                 ###############
 
+class WarehouseCRUD:
+    def __init__(self, name, location):
+        """ Inits WarehouseCRUD object and adds new warehouse to db."""
+        self._name = name
+        assert isinstance(self._name, str), 'name should be a string'
 
-def new_warehouse(name, location):
-    """ Adds new warehouse to db and returns it."""
-    warehouse = db_model.WarehouseSQLA(name=name, location=location)
-    db_model.db.session.add(warehouse)
-    db_model.db.session.commit()
-    return warehouse
+        self._location = location
+        assert isinstance(self._location, str), 'location should be a string'
 
+        self._id = self.create(self._name, self._location)
+        
+    @property
+    def name(self):
+        return self._name
 
-def get_warehouse(id_):
-    """
-    Returns individual warehouse with given *id*
-    or None if there is no such a warehouse.
-    """
-    query1 = db_model.WarehouseSQLA.query.filter_by(_id=id_)
-    if query1.count() > 0:
-        return query1.one()
-    else:
-        return None
+    @property
+    def location(self):
+        return self._location
 
+    @property
+    def id_(self):
+        return self._id
 
-def get_warehouses(with_deleted=False):
-    """ Yields all warehouses."""
-    warehouses = db_model.WarehouseSQLA.query.all()
-    for warehouse in warehouses:
-        if not warehouse.deleted or with_deleted:
-            yield warehouse
-
-
-def update_warehouse(id_, name=None, location=None):
-    """
-    Updates in db name, location of a warehouse with given *id_*
-    and returns it.
-    """
-
-    # creating dictionary of all arguments, but *id_*
-    kwargs = locals()
-    kwargs.pop("id_")
-
-    entity = get_warehouse(id_)
-    for key, value in kwargs.items():
-        if value is not None:
-            setattr(entity, key, value)
-
-    db_model.db.session.add(entity)
-    db_model.db.session.commit()
-    return entity
-
-
-def delete_warehouse(id_):
-    """
-    Marks warehouse with given *id* as deleted.
-    Returns True if successful, False if it was already deleted.
-    """
-    warehouse = get_warehouse(id_=id_)
-    if not warehouse.deleted:
-        warehouse.deleted = True
+    @staticmethod
+    def create(name, location):
+        """ Adds warehouse to database and returns its *id*. """
+        warehouse = db_model.WarehouseSQLA(name=name, location=location)
         db_model.db.session.add(warehouse)
         db_model.db.session.commit()
-        return True
-    else:
-        return False
+        return warehouse.id_
 
+    @staticmethod
+    def get_warehouse(id_):
+        """
+        Returns individual warehouse with given *id*
+        or None if there is no such a warehouse.
+        """
+        query1 = db_model.WarehouseSQLA.query.filter_by(_id=id_)
+        if query1.count() > 0:
+            return query1.one()
+        else:
+            return None
 
-def undelete_warehouse(id_):
-    """
-    Marks warehouse with given *id* as not deleted.
-    Returns True if successful, False if it wasn't deleted.
-    """
-    warehouse = get_warehouse(id_=id_)
-    if warehouse.deleted:
-        warehouse.deleted = False
-        db_model.db.session.add(warehouse)
+    @staticmethod
+    def get_warehouses(with_deleted=False):
+        """ Yields all warehouses."""
+        warehouses = db_model.WarehouseSQLA.query.all()
+        for warehouse in warehouses:
+            if not warehouse.deleted or with_deleted:
+                yield warehouse
+
+    @staticmethod
+    def update_warehouse(id_, name=None, location=None):
+        """
+        Updates in db name, location of a warehouse with given *id_*
+        and returns it.
+        """
+        # creating dictionary of all arguments, but *id_*
+        kwargs = locals()
+        kwargs.pop("id_")
+
+        entity = WarehouseCRUD.get_warehouse(id_)
+        for key, value in kwargs.items():
+            if value is not None:
+                setattr(entity, key, value)
+
+        db_model.db.session.add(entity)
         db_model.db.session.commit()
-        return True
-    else:
-        return False
+        return entity
+
+    @staticmethod
+    def delete_warehouse(id_):
+        """
+        Marks warehouse with given *id* as deleted.
+        Returns True if successful, False if it was already deleted.
+        """
+        warehouse = WarehouseCRUD.get_warehouse(id_=id_)
+        if not warehouse.deleted:
+            warehouse.deleted = True
+            db_model.db.session.add(warehouse)
+            db_model.db.session.commit()
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def undelete_warehouse(id_):
+        """
+        Marks warehouse with given *id* as not deleted.
+        Returns True if successful, False if it wasn't deleted.
+        """
+        warehouse = WarehouseCRUD.get_warehouse(id_=id_)
+        if warehouse.deleted:
+            warehouse.deleted = False
+            db_model.db.session.add(warehouse)
+            db_model.db.session.commit()
+            return True
+        else:
+            return False
 
 
                                 ##############
