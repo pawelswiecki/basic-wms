@@ -108,81 +108,111 @@ class WarehouseCRUD:
                                 #  SUPPLIER  #
                                 ##############
 
+class SupplierCRUD:
+    def __init__(self, VATIN, name, location):
+        """ Inits SupplierCRUD object and adds new supplier to db."""
+        self._VATIN = VATIN
+        assert isinstance(self._VATIN, str), 'VATIN should be a string'
 
-def new_supplier(VATIN, name, location):
-    """ Adds new supplier to db and returns it."""
-    supplier = db_model.SupplierSQLA(VATIN=VATIN, name=name, location=location)
-    db_model.db.session.add(supplier)
-    db_model.db.session.commit()
-    return supplier
+        self._name = name
+        assert isinstance(self._name, str), 'name should be a string'
 
+        self._location = location
+        assert isinstance(self._location, str), 'location should be a string'
 
-def get_supplier(id_):
-    """
-    Returns dictionary with serialized object's fields:
-    {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
-     'location': str}.
-    """
-    return db_model.SupplierSQLA.get_supplier(id_).serialize
+        self._id = self.create(self._VATIN, self._name, self._location)
 
+    @property
+    def VATIN(self):
+        return self._VATIN
 
-def get_suppliers(with_deleted=False):
-    """ Yields all suppliers."""
-    suppliers = db_model.SupplierSQLA.get_suppliers()
-    for supplier in suppliers:
-        if not supplier.deleted or with_deleted:
-            yield supplier
+    @property
+    def name(self):
+        return self._name
 
+    @property
+    def location(self):
+        return self._location
 
-def update_supplier(id_, VATIN=None, name=None, location=None):
-    """
-    Updates in db VATIN/name/location of a supplier with given *id_*
-    and returns it.
-    """
+    @property
+    def id_(self):
+        return self._id
 
-    # creating dictionary of all arguments, but *id_*
-    kwargs = locals()
-    kwargs.pop("id_")
-
-    entity = db_model.SupplierSQLA.get_supplier(id_)
-    for key, value in kwargs.items():
-        if value is not None:
-            setattr(entity, key, value)
-
-    db_model.db.session.add(entity)
-    db_model.db.session.commit()
-    return entity
-
-
-def delete_supplier(id_):
-    """
-    Marks supplier with given *id* as deleted.
-    Returns True if successful, False if it was already deleted.
-    """
-    supplier = db_model.SupplierSQLA.get_supplier(id_=id_)
-    if not supplier.deleted:
-        supplier.deleted = True
+    @staticmethod
+    def create(VATIN, name, location):
+        """ Adds supplier to database and returns its *id*. """
+        supplier = db_model.SupplierSQLA(VATIN=VATIN, name=name, location=location)
         db_model.db.session.add(supplier)
         db_model.db.session.commit()
-        return True
-    else:
-        return False
+        return supplier.id_
 
 
-def undelete_supplier(id_):
-    """
-    Marks supplier with given *id* as not deleted.
-    Returns True if successful, False if it wasn't deleted.
-    """
-    supplier = db_model.SupplierSQLA.get_supplier(id_=id_)
-    if supplier.deleted:
-        supplier.deleted = False
-        db_model.db.session.add(supplier)
+    @staticmethod
+    def get_supplier(id_):
+        """
+        Returns dictionary with serialized object's fields:
+        {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
+         'location': str}.
+        """
+        return db_model.SupplierSQLA.get_supplier(id_).serialize
+
+    @staticmethod
+    def get_suppliers(with_deleted=False):
+        """ Yields all suppliers."""
+        suppliers = db_model.SupplierSQLA.get_suppliers()
+        for supplier in suppliers:
+            if not supplier.deleted or with_deleted:
+                yield supplier
+
+    @staticmethod
+    def update_supplier(id_, VATIN=None, name=None, location=None):
+        """
+        Updates in db VATIN/name/location of a supplier with given *id_*
+        and returns it.
+        """
+
+        # creating dictionary of all arguments, but *id_*
+        kwargs = locals()
+        kwargs.pop("id_")
+
+        entity = db_model.SupplierSQLA.get_supplier(id_)
+        for key, value in kwargs.items():
+            if value is not None:
+                setattr(entity, key, value)
+
+        db_model.db.session.add(entity)
         db_model.db.session.commit()
-        return True
-    else:
-        return False
+        return entity
 
+    @staticmethod
+    def delete_supplier(id_):
+        """
+        Marks supplier with given *id* as deleted.
+        Returns True if successful, False if it was already deleted.
+        """
+        supplier = db_model.SupplierSQLA.get_supplier(id_=id_)
+        if not supplier.deleted:
+            supplier.deleted = True
+            db_model.db.session.add(supplier)
+            db_model.db.session.commit()
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def undelete_supplier(id_):
+        """
+        Marks supplier with given *id* as not deleted.
+        Returns True if successful, False if it wasn't deleted.
+        """
+        supplier = db_model.SupplierSQLA.get_supplier(id_=id_)
+        if supplier.deleted:
+            supplier.deleted = False
+            db_model.db.session.add(supplier)
+            db_model.db.session.commit()
+            return True
+        else:
+            return False
 
                                 ###############
                                 #  ITEM TYPE  #

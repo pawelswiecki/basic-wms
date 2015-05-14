@@ -21,9 +21,9 @@ print("  #aa", db_api.WarehouseCRUD(name="Warehouse 1", location="address123").i
 print("  #ab", db_api.WarehouseCRUD(name="Warehouse 2", location="address314").id_ == 2)
 print("  #ac", db_api.WarehouseCRUD(name="Warehouse 3", location="address4321").id_ == 3)
 
-db_api.new_supplier(VATIN="1234-5456-444", name="Company 1", location="address X")
-db_api.new_supplier(VATIN="9695-3766-333", name="Company 2", location="address Y")
-db_api.new_supplier(VATIN="1010-2020-030", name="Company 3", location="address Z")
+print("  #ba", db_api.SupplierCRUD(VATIN="1234-5456-444", name="Company 1", location="address X").id_ == 1)
+print("  #bb", db_api.SupplierCRUD(VATIN="9695-3766-333", name="Company 2", location="address Y").id_ == 2)
+print("  #bc", db_api.SupplierCRUD(VATIN="1010-2020-030", name="Company 3", location="address Z").id_ == 3)
 
 db_api.new_item_type(name="keyboard", item_model="X-PRO 2", manufacturer="HiTex",
                      unit_of_measure="EA")
@@ -38,7 +38,7 @@ warehouse1 = next(warehouses)
 warehouse2 = next(warehouses)
 warehouse3 = next(warehouses)
 
-suppliers = db_api.get_suppliers()
+suppliers = db_api.SupplierCRUD.get_suppliers()
 supplier1 = next(suppliers)
 supplier2 = next(suppliers)
 supplier3 = next(suppliers)
@@ -84,13 +84,13 @@ print("  #16", db_api.WarehouseCRUD.get_warehouse(warehouse1_id)['name'] == "Bob
 
 
 # print("updating supplier:")
-suppliers = db_api.get_suppliers()
+suppliers = db_api.SupplierCRUD.get_suppliers()
 supplier1 = next(suppliers)
 supplier1_id = supplier1.id_
-print("  #17", db_api.update_supplier(supplier1_id, VATIN="000000") is not None)
-print("  #18", db_api.get_supplier(supplier1_id)['VATIN'] == "000000")
-print("  #19", db_api.update_supplier(supplier1_id, name="New Name of the Company") is not None)
-print("  #20", db_api.get_supplier(supplier1_id)['name'] == "New Name of the Company")
+print("  #17", db_api.SupplierCRUD.update_supplier(supplier1_id, VATIN="000000") is not None)
+print("  #18", db_api.SupplierCRUD.get_supplier(supplier1_id)['VATIN'] == "000000")
+print("  #19", db_api.SupplierCRUD.update_supplier(supplier1_id, name="New Name of the Company") is not None)
+print("  #20", db_api.SupplierCRUD.get_supplier(supplier1_id)['name'] == "New Name of the Company")
 
 # print("updating item type:")
 item_types = db_api.get_item_types()
@@ -111,7 +111,7 @@ item_types = db_api.get_item_types()
 next(item_types)
 item_type2 = next(item_types)
 
-suppliers = db_api.get_suppliers()
+suppliers = db_api.SupplierCRUD.get_suppliers()
 next(suppliers)
 supplier2 = next(suppliers)
 
@@ -147,12 +147,12 @@ print("  #40", db_api.delete_item_type(item_type2.id_) == False)
 db_api.undelete_item_type(item_type2.id_)
 print("  #41", db_api.delete_item_type(item_type2.id_) == True)
 
-print("  #42", (supplier2.id_ in [x.id_ for x in db_api.get_suppliers()]) == True)
-print("  #43", db_api.delete_supplier(supplier2.id_) == True)
-print("  #44", (supplier2.id_ in [x.id_ for x in db_api.get_suppliers()]) == False)
-print("  #45", db_api.delete_supplier(supplier2.id_) == False)
-db_api.undelete_supplier(supplier2.id_)
-print("  #46", db_api.delete_supplier(supplier2.id_) == True)
+print("  #42", (supplier2.id_ in [x.id_ for x in db_api.SupplierCRUD.get_suppliers()]) == True)
+print("  #43", db_api.SupplierCRUD.delete_supplier(supplier2.id_) == True)
+print("  #44", (supplier2.id_ in [x.id_ for x in db_api.SupplierCRUD.get_suppliers()]) == False)
+print("  #45", db_api.SupplierCRUD.delete_supplier(supplier2.id_) == False)
+db_api.SupplierCRUD.undelete_supplier(supplier2.id_)
+print("  #46", db_api.SupplierCRUD.delete_supplier(supplier2.id_) == True)
 
 print("  #47", (warehouse2.id_ in [x.id_ for x in db_api.WarehouseCRUD.get_warehouses()]) == True)
 print("  #48", db_api.WarehouseCRUD.delete_warehouse(warehouse2.id_) == True)
