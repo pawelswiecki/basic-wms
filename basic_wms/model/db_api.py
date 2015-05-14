@@ -342,82 +342,129 @@ class ItemTypeCRUD:
                                 #  ITEM BATCH  #
                                 ################
 
+        
+class ItemBatchCRUD:
+    def __init__(self, quantity, warehouse_id, supplier_id, item_type_id):
+        """ Inits SupplierCRUD object and adds new supplier to db."""
+        self._quantity = quantity
+        assert isinstance(self._quantity, int),\
+            'quantity should be an integer'
 
-def new_item_batch(quantity, warehouse_id, supplier_id, item_type_id):
-    """ Adds new item batch to db and returns it."""
-    warehouse = db_model.WarehouseSQLA.get_warehouse(warehouse_id)
-    supplier = db_model.SupplierSQLA.get_supplier(supplier_id)
-    item_type = db_model.ItemTypeSQLA.get_item_type(item_type_id)
+        self._warehouse_id = warehouse_id
+        assert isinstance(self._warehouse_id, int),\
+            'warehouse_id should be an integer'
 
-    item_batch = db_model.ItemBatchSQLA(quantity=quantity, warehouse=warehouse,
-                                    supplier=supplier, item_type=item_type)
-    db_model.db.session.add(item_batch)
-    db_model.db.session.commit()
-    return item_batch
+        self._supplier_id = supplier_id
+        assert isinstance(self._supplier_id, int),\
+            'supplier_id should be an integer'
 
+        self._item_type_id = item_type_id
+        assert isinstance(self._item_type_id, int),\
+            'item_type_id should be an integer'
 
-def get_item_batch(id_):
-    """
-    Returns individual item_batch with given *id*
-    or None if there is no such an item_type.
-    """
-    return db_model.ItemBatchSQLA.get_item_batch(id_)
+        self._id = self.create(self._quantity, self._warehouse_id,
+                               self._supplier_id, self._item_type_id)
 
+    @property
+    def quantity(self):
+        return self._quantity
 
-def get_item_batches(with_deleted=False):
-    """ Yields all item_batches."""
-    item_batches = db_model.ItemBatchSQLA.get_item_batches()
-    for item_batch in item_batches:
-        if not item_batch.deleted or with_deleted:
-            yield item_batch
+    @property
+    def warehouse_id(self):
+        return self._warehouse_id
 
+    @property
+    def quantity(self):
+        return self._quantity
 
-def update_item_batch(id_, quantity=None, warehouse=None, supplier=None,
-                      item_type=None):
-    """
-    Updates in db quantity/warehouse/supplier/item_type
-    of an item_batch with given *id_* and returns it.
-    """
-    
-    # creating dictionary of all arguments, but *id_*
-    kwargs = locals()
-    kwargs.pop("id_")
+    @property
+    def supplier_id(self):
+        return self._supplier_id
 
-    entity = get_item_batch(id_)
-    for key, value in kwargs.items():
-        if value is not None:
-            setattr(entity, key, value)
+    @property
+    def item_type_id(self):
+        return self._item_type_id
 
-    db_model.db.session.add(entity)
-    db_model.db.session.commit()
-    return entity
+    @property
+    def id_(self):
+        return self._id
 
+    @staticmethod
+    def create(quantity, warehouse_id, supplier_id, item_type_id):
+        """ Adds new item batch to db and returns it."""
+        warehouse = db_model.WarehouseSQLA.get_warehouse(warehouse_id)
+        supplier = db_model.SupplierSQLA.get_supplier(supplier_id)
+        item_type = db_model.ItemTypeSQLA.get_item_type(item_type_id)
 
-def delete_item_batch(id_):
-    """
-    Marks item_batch with given *id* as deleted. 
-    Returns True if successful, False if it was already deleted.
-    """
-    item_batch= get_item_batch(id_=id_)
-    if not item_batch.deleted:
-        item_batch.deleted = True
+        item_batch = db_model.ItemBatchSQLA(quantity=quantity, warehouse=warehouse,
+                                            supplier=supplier, item_type=item_type)
         db_model.db.session.add(item_batch)
         db_model.db.session.commit()
-        return True
-    else:
-        return False
+        return item_batch.id_
 
+    @staticmethod
+    def get_item_batch(id_):
+        """
+        Returns individual item_batch with given *id*
+        or None if there is no such an item_type.
+        """
+        return db_model.ItemBatchSQLA.get_item_batch(id_)
 
-def undelete_item_batch(id_):
-    """
-    Marks item_batch with given *id* as not deleted. 
-    Returns True if successful, False if it wasn't deleted.
-    """
-    item_batch = get_item_batch(id_=id_)
-    if item_batch.deleted:
-        item_batch.deleted = False
-        db_model.db.session.add(item_batch)
+    @staticmethod
+    def get_item_batches(with_deleted=False):
+        """ Yields all item_batches."""
+        item_batches = db_model.ItemBatchSQLA.get_item_batches()
+        for item_batch in item_batches:
+            if not item_batch.deleted or with_deleted:
+                yield item_batch
+
+    @staticmethod
+    def update_item_batch(id_, quantity=None, warehouse=None, supplier=None,
+                          item_type=None):
+        """
+        Updates in db quantity/warehouse/supplier/item_type
+        of an item_batch with given *id_* and returns it.
+        """
+
+        # creating dictionary of all arguments, but *id_*
+        kwargs = locals()
+        kwargs.pop("id_")
+
+        entity = ItemBatchCRUD.get_item_batch(id_)
+        for key, value in kwargs.items():
+            if value is not None:
+                setattr(entity, key, value)
+
+        db_model.db.session.add(entity)
         db_model.db.session.commit()
-        return True
-    else:
-        return False
+        return entity
+
+    @staticmethod
+    def delete_item_batch(id_):
+        """
+        Marks item_batch with given *id* as deleted.
+        Returns True if successful, False if it was already deleted.
+        """
+        item_batch= ItemBatchCRUD.get_item_batch(id_=id_)
+        if not item_batch.deleted:
+            item_batch.deleted = True
+            db_model.db.session.add(item_batch)
+            db_model.db.session.commit()
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def undelete_item_batch(id_):
+        """
+        Marks item_batch with given *id* as not deleted.
+        Returns True if successful, False if it wasn't deleted.
+        """
+        item_batch = ItemBatchCRUD.get_item_batch(id_=id_)
+        if item_batch.deleted:
+            item_batch.deleted = False
+            db_model.db.session.add(item_batch)
+            db_model.db.session.commit()
+            return True
+        else:
+            return False

@@ -47,24 +47,24 @@ item_type3 = next(item_types)
 
 
 # print("adding batches:")
-batch1 = db_api.new_item_batch(quantity=150, warehouse_id=1,
+batch1 = db_api.ItemBatchCRUD(quantity=150, warehouse_id=1,
                                supplier_id=1, item_type_id=1)
-batch2 = db_api.new_item_batch(quantity=56, warehouse_id=2,
+batch2 = db_api.ItemBatchCRUD(quantity=56, warehouse_id=2,
                                supplier_id=2, item_type_id=2)
-batch3 = db_api.new_item_batch(quantity=566, warehouse_id=3,
+batch3 = db_api.ItemBatchCRUD(quantity=566, warehouse_id=3,
                                supplier_id=3, item_type_id=3)
 
-print("  #01", batch1.supplier.id_ == 1)
-print("  #02", batch2.supplier.id_ == 2)
-print("  #03", batch3.supplier.id_ == 3)
+print("  #01", batch1.supplier_id == 1)
+print("  #02", batch2.supplier_id == 2)
+print("  #03", batch3.supplier_id == 3)
 
-print("  #04", batch1.warehouse.id_ == 1)
-print("  #05", batch2.warehouse.id_ == 2)
-print("  #06", batch3.warehouse.id_ == 3)
+print("  #04", batch1.warehouse_id == 1)
+print("  #05", batch2.warehouse_id == 2)
+print("  #06", batch3.warehouse_id == 3)
   
-print("  #07", batch1.item_type.id_ == 1)
-print("  #08", batch2.item_type.id_ == 2)
-print("  #09", batch3.item_type.id_ == 3)
+print("  #07", batch1.item_type_id == 1)
+print("  #08", batch2.item_type_id == 2)
+print("  #09", batch3.item_type_id == 3)
 
 # print("updating warehouse:")
 warehouses = db_api.WarehouseCRUD.get_warehouses()
@@ -101,7 +101,7 @@ print("  #24", db_api.ItemTypeCRUD.get_item_type(item_type1_id)['manufacturer'] 
 
 
 # print("updating item batch:")
-item_batches = db_api.get_item_batches()
+item_batches = db_api.ItemBatchCRUD.get_item_batches()
 item_batch1 = next(item_batches)
 
 item_types = db_api.ItemTypeCRUD.get_item_types()
@@ -118,24 +118,24 @@ warehouse2 = next(warehouses)
 
 item_batch1_id = item_batch1.id_
 
-print("  #25", db_api.get_item_batch(item_batch1_id).warehouse.id_ == 1)
-print("  #26", db_api.get_item_batch(item_batch1_id).supplier.id_ == 1)
-print("  #27", db_api.get_item_batch(item_batch1_id).item_type.id_ == 1)
-print("  #28", db_api.update_item_batch(item_batch1_id, quantity=12345,
+print("  #25", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).warehouse.id_ == 1)
+print("  #26", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).supplier.id_ == 1)
+print("  #27", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).item_type.id_ == 1)
+print("  #28", db_api.ItemBatchCRUD.update_item_batch(item_batch1_id, quantity=12345,
                               warehouse=warehouse2, supplier=supplier2,
                               item_type=item_type2) is not None)
 
-print("  #29", db_api.get_item_batch(item_batch1_id).warehouse.id_ == 2)
-print("  #30", db_api.get_item_batch(item_batch1_id).supplier.id_ == 2)
-print("  #31", db_api.get_item_batch(item_batch1_id).item_type.id_ == 2)
+print("  #29", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).warehouse.id_ == 2)
+print("  #30", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).supplier.id_ == 2)
+print("  #31", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).item_type.id_ == 2)
 
 # print("deleting:")
-print("  #32", (item_batch1.id_ in [x.id_ for x in db_api.get_item_batches()]) == True)
-print("  #33", db_api.delete_item_batch(item_batch1.id_) == True)
-print("  #34", (item_batch1.id_ in [x.id_ for x in db_api.get_item_batches()]) == False)
-print("  #35", db_api.delete_item_batch(item_batch1.id_) == False)
-db_api.undelete_item_batch(item_batch1.id_)
-print("  #36", db_api.delete_item_batch(item_batch1.id_) == True)
+print("  #32", (item_batch1.id_ in [x.id_ for x in db_api.ItemBatchCRUD.get_item_batches()]) == True)
+print("  #33", db_api.ItemBatchCRUD.delete_item_batch(item_batch1.id_) == True)
+print("  #34", (item_batch1.id_ in [x.id_ for x in db_api.ItemBatchCRUD.get_item_batches()]) == False)
+print("  #35", db_api.ItemBatchCRUD.delete_item_batch(item_batch1.id_) == False)
+db_api.ItemBatchCRUD.undelete_item_batch(item_batch1.id_)
+print("  #36", db_api.ItemBatchCRUD.delete_item_batch(item_batch1.id_) == True)
 
 print("  #37", (item_type2.id_ in [x.id_ for x in db_api.ItemTypeCRUD.get_item_types()]) == True)
 print("  #38", db_api.ItemTypeCRUD.delete_item_type(item_type2.id_) == True)
