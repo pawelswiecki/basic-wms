@@ -23,7 +23,6 @@ class CommonFieldsSQLA():
     def init_common_fields(self):
         self._deleted = False
 
-
     @property
     def id_(self):
         return self._id

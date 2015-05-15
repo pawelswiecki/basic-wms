@@ -71,7 +71,7 @@ print("  #09", batch3.item_type_id == 3)
 # print("updating warehouse:")
 warehouses = db_api.WarehouseCRUD.get_warehouses()
 warehouse1 = next(warehouses)
-warehouse1_id = warehouse1.id_
+warehouse1_id = warehouse1['id']
 print("  #10", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, name="Warehouse 2") is False)
 print("  #1A", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, name="Frank") is True)
 print("  #11", db_api.WarehouseCRUD.get_warehouse(warehouse1_id)['name'] == "Frank")
@@ -89,7 +89,7 @@ print("  #16", db_api.WarehouseCRUD.get_warehouse(warehouse1_id)['name'] == "Bob
 # print("updating supplier:")
 suppliers = db_api.SupplierCRUD.get_suppliers()
 supplier1 = next(suppliers)
-supplier1_id = supplier1.id_
+supplier1_id = supplier1['id']
 print("  #17", db_api.SupplierCRUD.update_supplier(supplier1_id, VATIN="000000") is True)
 print("  #1A", db_api.SupplierCRUD.update_supplier(supplier1_id, VATIN="9695-3766-333") is False)
 print("  #18", db_api.SupplierCRUD.get_supplier(supplier1_id)['VATIN'] == "000000")
@@ -99,7 +99,7 @@ print("  #20", db_api.SupplierCRUD.get_supplier(supplier1_id)['name'] == "New Na
 # print("updating item type:")
 item_types = db_api.ItemTypeCRUD.get_item_types()
 item_type1 = next(item_types)
-item_type1_id = item_type1.id_
+item_type1_id = item_type1['id']
 print("  #21", db_api.ItemTypeCRUD.update_item_type(item_type1_id, name="mouse", item_model="1001",
                               manufacturer="Logitech") is True)
 print("  #22", db_api.ItemTypeCRUD.get_item_type(item_type1_id)['name'] == "mouse")
@@ -123,7 +123,7 @@ warehouses = db_api.WarehouseCRUD.get_warehouses()
 next(warehouses)
 warehouse2 = next(warehouses)
 
-item_batch1_id = item_batch1.id_
+item_batch1_id = item_batch1['id']
 
 print("  #25", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).warehouse.id_ == 1)
 print("  #26", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).supplier.id_ == 1)
@@ -136,30 +136,30 @@ print("  #30", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).supplier.id_ 
 print("  #31", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).item_type.id_ == 2)
 
 # print("deleting:")
-print("  #32", (item_batch1.id_ in [x.id_ for x in db_api.ItemBatchCRUD.get_item_batches()]) == True)
-print("  #33", db_api.ItemBatchCRUD.delete_item_batch(item_batch1.id_) == True)
-print("  #34", (item_batch1.id_ in [x.id_ for x in db_api.ItemBatchCRUD.get_item_batches()]) == False)
-print("  #35", db_api.ItemBatchCRUD.delete_item_batch(item_batch1.id_) == False)
-db_api.ItemBatchCRUD.undelete_item_batch(item_batch1.id_)
-print("  #36", db_api.ItemBatchCRUD.delete_item_batch(item_batch1.id_) == True)
+print("  #32", (item_batch1['id'] in [x['id'] for x in db_api.ItemBatchCRUD.get_item_batches()]) == True)
+print("  #33", db_api.ItemBatchCRUD.delete_item_batch(item_batch1['id']) == True)
+print("  #34", (item_batch1['id'] in [x['id'] for x in db_api.ItemBatchCRUD.get_item_batches()]) == False)
+print("  #35", db_api.ItemBatchCRUD.delete_item_batch(item_batch1['id']) == False)
+db_api.ItemBatchCRUD.undelete_item_batch(item_batch1['id'])
+print("  #36", db_api.ItemBatchCRUD.delete_item_batch(item_batch1['id']) == True)
 
-print("  #37", (item_type2.id_ in [x.id_ for x in db_api.ItemTypeCRUD.get_item_types()]) == True)
-print("  #38", db_api.ItemTypeCRUD.delete_item_type(item_type2.id_) == True)
-print("  #39", (item_type2.id_ in [x.id_ for x in db_api.ItemTypeCRUD.get_item_types()]) == False)
-print("  #40", db_api.ItemTypeCRUD.delete_item_type(item_type2.id_) == False)
-db_api.ItemTypeCRUD.undelete_item_type(item_type2.id_)
-print("  #41", db_api.ItemTypeCRUD.delete_item_type(item_type2.id_) == True)
+print("  #37", (item_type2['id'] in [x['id'] for x in db_api.ItemTypeCRUD.get_item_types()]) == True)
+print("  #38", db_api.ItemTypeCRUD.delete_item_type(item_type2['id']) == True)
+print("  #39", (item_type2['id'] in [x['id'] for x in db_api.ItemTypeCRUD.get_item_types()]) == False)
+print("  #40", db_api.ItemTypeCRUD.delete_item_type(item_type2['id']) == False)
+db_api.ItemTypeCRUD.undelete_item_type(item_type2['id'])
+print("  #41", db_api.ItemTypeCRUD.delete_item_type(item_type2['id']) == True)
 
-print("  #42", (supplier2.id_ in [x.id_ for x in db_api.SupplierCRUD.get_suppliers()]) == True)
-print("  #43", db_api.SupplierCRUD.delete_supplier(supplier2.id_) == True)
-print("  #44", (supplier2.id_ in [x.id_ for x in db_api.SupplierCRUD.get_suppliers()]) == False)
-print("  #45", db_api.SupplierCRUD.delete_supplier(supplier2.id_) == False)
-db_api.SupplierCRUD.undelete_supplier(supplier2.id_)
-print("  #46", db_api.SupplierCRUD.delete_supplier(supplier2.id_) == True)
+print("  #42", (supplier2['id'] in [x['id'] for x in db_api.SupplierCRUD.get_suppliers()]) == True)
+print("  #43", db_api.SupplierCRUD.delete_supplier(supplier2['id']) == True)
+print("  #44", (supplier2['id'] in [x['id'] for x in db_api.SupplierCRUD.get_suppliers()]) == False)
+print("  #45", db_api.SupplierCRUD.delete_supplier(supplier2['id']) == False)
+db_api.SupplierCRUD.undelete_supplier(supplier2['id'])
+print("  #46", db_api.SupplierCRUD.delete_supplier(supplier2['id']) == True)
 
-print("  #47", (warehouse2.id_ in [x.id_ for x in db_api.WarehouseCRUD.get_warehouses()]) == True)
-print("  #48", db_api.WarehouseCRUD.delete_warehouse(warehouse2.id_) == True)
-print("  #49", (warehouse2.id_ in [x.id_ for x in db_api.WarehouseCRUD.get_warehouses()]) == False)
-print("  #50", db_api.WarehouseCRUD.delete_warehouse(warehouse2.id_) == False)
-db_api.WarehouseCRUD.undelete_warehouse(warehouse2.id_)
-print("  #51", db_api.WarehouseCRUD.delete_warehouse(warehouse2.id_) == True)
+print("  #47", (warehouse2['id'] in [x['id'] for x in db_api.WarehouseCRUD.get_warehouses()]) == True)
+print("  #48", db_api.WarehouseCRUD.delete_warehouse(warehouse2['id']) == True)
+print("  #49", (warehouse2['id'] in [x['id'] for x in db_api.WarehouseCRUD.get_warehouses()]) == False)
+print("  #50", db_api.WarehouseCRUD.delete_warehouse(warehouse2['id']) == False)
+db_api.WarehouseCRUD.undelete_warehouse(warehouse2['id'])
+print("  #51", db_api.WarehouseCRUD.delete_warehouse(warehouse2['id']) == True)

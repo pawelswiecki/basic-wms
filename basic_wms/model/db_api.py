@@ -60,11 +60,14 @@ class WarehouseCRUD:
 
     @staticmethod
     def get_warehouses(with_deleted=False):
-        """ Yields all warehouses."""
+        """
+        Yields all warehouses in serialized form:
+        {'id': int, 'deleted': bool, 'name': str, 'location': str}.
+        """
         warehouses = db_model.WarehouseSQLA.get_warehouses()
         for warehouse in warehouses:
             if not warehouse.deleted or with_deleted:
-                yield warehouse
+                yield warehouse.serialize
 
     @staticmethod
     def update_warehouse(id_, name=None, location=None):
@@ -175,11 +178,15 @@ class SupplierCRUD:
 
     @staticmethod
     def get_suppliers(with_deleted=False):
-        """ Yields all suppliers."""
+        """
+        Yields all suppliers in serialized form:
+         {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
+         'location': str}.
+        """
         suppliers = db_model.SupplierSQLA.get_suppliers()
         for supplier in suppliers:
             if not supplier.deleted or with_deleted:
-                yield supplier
+                yield supplier.serialize
 
     @staticmethod
     def update_supplier(id_, VATIN=None, name=None, location=None):
@@ -302,11 +309,15 @@ class ItemTypeCRUD:
 
     @staticmethod
     def get_item_types(with_deleted=False):
-        """ Yields all item_types."""
+        """
+        Yields all item_types in serialized form:
+        {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
+         'manufacturer': str, 'unit_of_measure': str}.
+        """
         item_types = db_model.ItemTypeSQLA.get_item_types()
         for item_type in item_types:
             if not item_type.deleted or with_deleted:
-                yield item_type
+                yield item_type.serialize
 
     @staticmethod
     def update_item_type(id_, name=None, item_model=None, manufacturer=None,
@@ -438,11 +449,15 @@ class ItemBatchCRUD:
 
     @staticmethod
     def get_item_batches(with_deleted=False):
-        """ Yields all item_batches."""
+        """
+        Yields all item_batches in serialized form:
+        {'id': int, 'deleted': bool, 'quantity': str,
+         'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
+        """
         item_batches = db_model.ItemBatchSQLA.get_item_batches()
         for item_batch in item_batches:
             if not item_batch.deleted or with_deleted:
-                yield item_batch
+                yield item_batch.serialize
 
     @staticmethod
     def update_item_batch(id_, quantity=None, warehouse_id=None,
