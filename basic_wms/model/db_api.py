@@ -468,13 +468,17 @@ class ItemBatchCRUD:
                 yield item_batch
 
     @staticmethod
-    def update_item_batch(id_, quantity=None, warehouse=None, supplier=None,
-                          item_type=None):
+    def update_item_batch(id_, quantity=None, warehouse_id=None,
+                          supplier_id=None, item_type_id=None):
         """
         Updates in db quantity and/or warehouse and/or supplier
         and/or item_type of an item_batch with given *id_*.
         In case of IntegrityError returns False, otherwise returns True.
         """
+        warehouse = db_model.WarehouseSQLA.get_warehouse(warehouse_id)
+        supplier = db_model.SupplierSQLA.get_supplier(supplier_id)
+        item_type = db_model.ItemTypeSQLA.get_item_type(item_type_id)
+
         # creating dictionary of all arguments, but *id_*
         kwargs = locals()
         kwargs.pop("id_")

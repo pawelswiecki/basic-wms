@@ -270,19 +270,19 @@ class ItemBatchSQLA(db.Model, CommonFieldsSQLA):
                               nullable=False)
     _warehouse = db.relationship("WarehouseSQLA",
                                  backref=db.backref("item_batches",
-                                                   lazy="dynamic"))
+                                                    lazy="dynamic"))
     
     _supplier_id = db.Column(db.Integer, db.ForeignKey("supplier._id"),
                              nullable=False)
     _supplier = db.relationship("SupplierSQLA",
                                 backref=db.backref("item_batches",
-                                                  lazy="dynamic"))
+                                                   lazy="dynamic"))
 
     _item_type_id = db.Column(db.Integer, db.ForeignKey("item_type._id"),
                               nullable=False)
     _item_type = db.relationship("ItemTypeSQLA",
                                  backref=db.backref("item_batches",
-                                                   lazy="dynamic"))
+                                                    lazy="dynamic"))
 
     def __init__(self, quantity, warehouse, supplier, item_type):
         self.init_common_fields()

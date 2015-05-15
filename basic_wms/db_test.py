@@ -129,8 +129,7 @@ print("  #25", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).warehouse.id_
 print("  #26", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).supplier.id_ == 1)
 print("  #27", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).item_type.id_ == 1)
 print("  #28", db_api.ItemBatchCRUD.update_item_batch(item_batch1_id, quantity=12345,
-                              warehouse=warehouse2, supplier=supplier2,
-                              item_type=item_type2) is True)
+                              warehouse_id=2, supplier_id=2, item_type_id=2) is True)
 
 print("  #29", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).warehouse.id_ == 2)
 print("  #30", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).supplier.id_ == 2)
