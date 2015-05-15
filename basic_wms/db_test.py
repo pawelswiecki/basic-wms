@@ -18,12 +18,14 @@ print()
 print("TESTS")
 
 print("  #aa", db_api.WarehouseCRUD(name="Warehouse 1", location="address123").id_ == 1)
-print("  #ab", db_api.WarehouseCRUD(name="Warehouse 2", location="address314").id_ == 2)
-print("  #ac", db_api.WarehouseCRUD(name="Warehouse 3", location="address4321").id_ == 3)
+print("  #ab", db_api.WarehouseCRUD(name="Warehouse 1", location="asd").id_ is None)
+print("  #ac", db_api.WarehouseCRUD(name="Warehouse 2", location="address314").id_ == 2)
+print("  #ad", db_api.WarehouseCRUD(name="Warehouse 3", location="address4321").id_ == 3)
 
 print("  #ba", db_api.SupplierCRUD(VATIN="1234-5456-444", name="Company 1", location="address X").id_ == 1)
-print("  #bb", db_api.SupplierCRUD(VATIN="9695-3766-333", name="Company 2", location="address Y").id_ == 2)
-print("  #bc", db_api.SupplierCRUD(VATIN="1010-2020-030", name="Company 3", location="address Z").id_ == 3)
+print("  #bb", db_api.SupplierCRUD(VATIN="1234-5456-444", name="Company 102", location="address ASD").id_ is None)
+print("  #bc", db_api.SupplierCRUD(VATIN="9695-3766-333", name="Company 2", location="address Y").id_ == 2)
+print("  #bd", db_api.SupplierCRUD(VATIN="1010-2020-030", name="Company 3", location="address Z").id_ == 3)
 
 print("  #ca", db_api.ItemTypeCRUD(name="keyboard", item_model="X-PRO 2", manufacturer="HiTex", unit_of_measure="EA").id_ == 1)
 print("  #cb", db_api.ItemTypeCRUD(name="cell phone", item_model="3310", manufacturer="Nokia", unit_of_measure="EA").id_ == 2)
@@ -70,8 +72,12 @@ print("  #09", batch3.item_type_id == 3)
 warehouses = db_api.WarehouseCRUD.get_warehouses()
 warehouse1 = next(warehouses)
 warehouse1_id = warehouse1.id_
-print("  #10", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, name="Frank") is not None)
+print("  #10", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, name="Warehouse 2") is False)
+print("  #1A", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, name="Frank") is True)
 print("  #11", db_api.WarehouseCRUD.get_warehouse(warehouse1_id)['name'] == "Frank")
+
+
+
 print("  #12", db_api.WarehouseCRUD.update_warehouse(warehouse1_id, location="new address") is not None)
 print("  #13", db_api.WarehouseCRUD.get_warehouse(warehouse1_id)['location'] == "new address")
 
@@ -84,7 +90,8 @@ print("  #16", db_api.WarehouseCRUD.get_warehouse(warehouse1_id)['name'] == "Bob
 suppliers = db_api.SupplierCRUD.get_suppliers()
 supplier1 = next(suppliers)
 supplier1_id = supplier1.id_
-print("  #17", db_api.SupplierCRUD.update_supplier(supplier1_id, VATIN="000000") is not None)
+print("  #17", db_api.SupplierCRUD.update_supplier(supplier1_id, VATIN="000000") is True)
+print("  #1A", db_api.SupplierCRUD.update_supplier(supplier1_id, VATIN="9695-3766-333") is False)
 print("  #18", db_api.SupplierCRUD.get_supplier(supplier1_id)['VATIN'] == "000000")
 print("  #19", db_api.SupplierCRUD.update_supplier(supplier1_id, name="New Name of the Company") is not None)
 print("  #20", db_api.SupplierCRUD.get_supplier(supplier1_id)['name'] == "New Name of the Company")
@@ -94,7 +101,7 @@ item_types = db_api.ItemTypeCRUD.get_item_types()
 item_type1 = next(item_types)
 item_type1_id = item_type1.id_
 print("  #21", db_api.ItemTypeCRUD.update_item_type(item_type1_id, name="mouse", item_model="1001",
-                              manufacturer="Logitech") is not None)
+                              manufacturer="Logitech") is True)
 print("  #22", db_api.ItemTypeCRUD.get_item_type(item_type1_id)['name'] == "mouse")
 print("  #23", db_api.ItemTypeCRUD.get_item_type(item_type1_id)['item_model'] == "1001")
 print("  #24", db_api.ItemTypeCRUD.get_item_type(item_type1_id)['manufacturer'] == "Logitech")
@@ -123,7 +130,7 @@ print("  #26", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).supplier.id_ 
 print("  #27", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).item_type.id_ == 1)
 print("  #28", db_api.ItemBatchCRUD.update_item_batch(item_batch1_id, quantity=12345,
                               warehouse=warehouse2, supplier=supplier2,
-                              item_type=item_type2) is not None)
+                              item_type=item_type2) is True)
 
 print("  #29", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).warehouse.id_ == 2)
 print("  #30", db_api.ItemBatchCRUD.get_item_batch(item_batch1_id).supplier.id_ == 2)

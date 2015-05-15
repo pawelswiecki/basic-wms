@@ -40,7 +40,7 @@ class WarehouseSQLA(db.Model, CommonFieldsSQLA):
     __tablename__ = 'warehouse'
 
     _name = db.Column(db.String(80), unique=True, nullable=False)
-    _location = db.Column(db.String(120), nullable=False)    
+    _location = db.Column(db.String(120), nullable=False)
     
     def __init__(self, name, location):
         self.init_common_fields()
@@ -106,7 +106,7 @@ class ItemTypeSQLA(db.Model, CommonFieldsSQLA):
     _name = db.Column(db.String(45), nullable=False)
     _item_model = db.Column(db.String(45), nullable=False)
     _manufacturer = db.Column(db.String(45), nullable=False)
-    _unit_of_measure = db.Column(db.String(45), nullable=False)    
+    _unit_of_measure = db.Column(db.String(45), nullable=False)
 
     def __init__(self, name, item_model, manufacturer, unit_of_measure):
         self.init_common_fields()
@@ -186,12 +186,12 @@ class ItemTypeSQLA(db.Model, CommonFieldsSQLA):
     
 
 class SupplierSQLA(db.Model, CommonFieldsSQLA):
-    __tablename__ = 'supplier'    
+    __tablename__ = 'supplier'
     
     # VAT identification number (NIP in Poland)
     _VATIN = db.Column(db.String(45), nullable=False, unique=True)
     _name = db.Column(db.String(45), nullable=False)
-    _location = db.Column(db.String(45), nullable=False)    
+    _location = db.Column(db.String(45), nullable=False)
 
     def __init__(self, VATIN, name, location):
         self.init_common_fields()
@@ -264,7 +264,7 @@ class SupplierSQLA(db.Model, CommonFieldsSQLA):
 class ItemBatchSQLA(db.Model, CommonFieldsSQLA):
     __tablename__ = 'item_batch'
     
-    _quantity = db.Column(db.Integer, nullable=False)    
+    _quantity = db.Column(db.Integer, nullable=False)
    
     _warehouse_id = db.Column(db.Integer, db.ForeignKey("warehouse._id"),
                               nullable=False)

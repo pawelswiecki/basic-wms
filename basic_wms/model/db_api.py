@@ -1,10 +1,13 @@
 print(" # db_api.py")
 
+from sqlalchemy.exc import IntegrityError
+
 from basic_wms.model import db_model
+
+
 
 # TODO
 # - make that no ORM objects are leaking to user of this API
-
 
                                 ###############
                                 #  WAREHOUSE  #
@@ -19,6 +22,7 @@ class WarehouseCRUD:
         self._location = location
         assert isinstance(self._location, str), 'location should be a string'
 
+        # self._id == None if there was IntegrityError
         self._id = self.create(self._name, self._location)
         
     @property
@@ -35,10 +39,17 @@ class WarehouseCRUD:
 
     @staticmethod
     def create(name, location):
-        """ Adds warehouse to database and returns its *id*. """
+        """
+        Adds warehouse to database and returns its *id* or None in case
+        of IntegrityError.
+        """
         warehouse = db_model.WarehouseSQLA(name=name, location=location)
         db_model.db.session.add(warehouse)
-        db_model.db.session.commit()
+        try:
+            db_model.db.session.commit()
+        except IntegrityError:
+            db_model.db.session.rollback()
+            return None
         return warehouse.id_
 
     @staticmethod
@@ -60,8 +71,8 @@ class WarehouseCRUD:
     @staticmethod
     def update_warehouse(id_, name=None, location=None):
         """
-        Updates in db name, location of a warehouse with given *id_*
-        and returns it.
+        Updates in db name and/or location of a warehouse with given *id_*.
+        In case of IntegrityError returns False, otherwise returns True.
         """
         # creating dictionary of all arguments, but *id_*
         kwargs = locals()
@@ -71,10 +82,13 @@ class WarehouseCRUD:
         for key, value in kwargs.items():
             if value is not None:
                 setattr(entity, key, value)
-
         db_model.db.session.add(entity)
-        db_model.db.session.commit()
-        return entity
+        try:
+            db_model.db.session.commit()
+        except IntegrityError:
+            db_model.db.session.rollback()
+            return False
+        return True
 
     @staticmethod
     def delete_warehouse(id_):
@@ -123,6 +137,7 @@ class SupplierCRUD:
         self._location = location
         assert isinstance(self._location, str), 'location should be a string'
 
+        # self._id == None if there was IntegrityError
         self._id = self.create(self._VATIN, self._name, self._location)
 
     @property
@@ -143,10 +158,18 @@ class SupplierCRUD:
 
     @staticmethod
     def create(VATIN, name, location):
-        """ Adds supplier to database and returns its *id*. """
-        supplier = db_model.SupplierSQLA(VATIN=VATIN, name=name, location=location)
+        """
+        Adds supplier to database and returns its *id* or None in case
+        of IntegrityError.
+        """
+        supplier = db_model.SupplierSQLA(VATIN=VATIN, name=name,
+                                         location=location)
         db_model.db.session.add(supplier)
-        db_model.db.session.commit()
+        try:
+            db_model.db.session.commit()
+        except IntegrityError:
+            db_model.db.session.rollback()
+            return None
         return supplier.id_
 
 
@@ -170,10 +193,10 @@ class SupplierCRUD:
     @staticmethod
     def update_supplier(id_, VATIN=None, name=None, location=None):
         """
-        Updates in db VATIN/name/location of a supplier with given *id_*
-        and returns it.
+        Updates in db VATIN and/or name and/or location of a supplier
+        with given *id_*.
+        In case of IntegrityError returns False, otherwise returns True.
         """
-
         # creating dictionary of all arguments, but *id_*
         kwargs = locals()
         kwargs.pop("id_")
@@ -182,10 +205,13 @@ class SupplierCRUD:
         for key, value in kwargs.items():
             if value is not None:
                 setattr(entity, key, value)
-
         db_model.db.session.add(entity)
-        db_model.db.session.commit()
-        return entity
+        try:
+            db_model.db.session.commit()
+        except IntegrityError:
+            db_model.db.session.rollback()
+            return False
+        return True
 
     @staticmethod
     def delete_supplier(id_):
@@ -240,6 +266,7 @@ class ItemTypeCRUD:
         assert isinstance(self._unit_of_measure, str),\
             'unit_of_measure should be a string'
 
+        # self._id == None if there was IntegrityError
         self._id = self.create(self._name, self._item_model, self._manufacturer,
                                self._unit_of_measure)
 
@@ -265,12 +292,19 @@ class ItemTypeCRUD:
 
     @staticmethod
     def create(name, item_model, manufacturer, unit_of_measure):
-        """ Adds new item type to db and returns it."""
+        """
+        Adds new item type to db and returns its *id* or None in case of
+        IntegrityError.
+        """
         item_type = db_model.ItemTypeSQLA(name=name, item_model=item_model,
                                           manufacturer=manufacturer,
                                           unit_of_measure=unit_of_measure)
         db_model.db.session.add(item_type)
-        db_model.db.session.commit()
+        try:
+            db_model.db.session.commit()
+        except IntegrityError:
+            db_model.db.session.rollback()
+            return None
         return item_type.id_
 
     @staticmethod
@@ -294,10 +328,10 @@ class ItemTypeCRUD:
     def update_item_type(id_, name=None, item_model=None, manufacturer=None,
                          unit_of_measure=None):
         """
-        Updates in db name/item_model/manufacturer/unit_of_measure
-        of an item_type with given *id_* and returns it.
+        Updates in db name and/or item_model and/or manufacturer
+        and/or unit_of_measure of an item_type with given *id_*.
+        In case of IntegrityError returns False, otherwise returns True.
         """
-
         # creating dictionary of all arguments, but *id_*
         kwargs = locals()
         kwargs.pop("id_")
@@ -306,10 +340,13 @@ class ItemTypeCRUD:
         for key, value in kwargs.items():
             if value is not None:
                 setattr(entity, key, value)
-
         db_model.db.session.add(entity)
-        db_model.db.session.commit()
-        return entity
+        try:
+            db_model.db.session.commit()
+        except IntegrityError:
+            db_model.db.session.rollback()
+            return False
+        return True
 
     @staticmethod
     def delete_item_type(id_):
@@ -365,6 +402,7 @@ class ItemBatchCRUD:
         assert isinstance(self._item_type_id, int),\
             'item_type_id should be an integer'
 
+        # self._id == None if there was IntegrityError
         self._id = self.create(self._quantity, self._warehouse_id,
                                self._supplier_id, self._item_type_id)
 
@@ -394,7 +432,10 @@ class ItemBatchCRUD:
 
     @staticmethod
     def create(quantity, warehouse_id, supplier_id, item_type_id):
-        """ Adds new item batch to db and returns it."""
+        """
+        Adds new item batch to db and returns its *id* or None in case of
+        IntegrityError.
+        """
         warehouse = db_model.WarehouseSQLA.get_warehouse(warehouse_id)
         supplier = db_model.SupplierSQLA.get_supplier(supplier_id)
         item_type = db_model.ItemTypeSQLA.get_item_type(item_type_id)
@@ -402,7 +443,11 @@ class ItemBatchCRUD:
         item_batch = db_model.ItemBatchSQLA(quantity=quantity, warehouse=warehouse,
                                             supplier=supplier, item_type=item_type)
         db_model.db.session.add(item_batch)
-        db_model.db.session.commit()
+        try:
+            db_model.db.session.commit()
+        except IntegrityError:
+            db_model.db.session.rollback()
+            return None
         return item_batch.id_
 
     @staticmethod
@@ -426,10 +471,10 @@ class ItemBatchCRUD:
     def update_item_batch(id_, quantity=None, warehouse=None, supplier=None,
                           item_type=None):
         """
-        Updates in db quantity/warehouse/supplier/item_type
-        of an item_batch with given *id_* and returns it.
+        Updates in db quantity and/or warehouse and/or supplier
+        and/or item_type of an item_batch with given *id_*.
+        In case of IntegrityError returns False, otherwise returns True.
         """
-
         # creating dictionary of all arguments, but *id_*
         kwargs = locals()
         kwargs.pop("id_")
@@ -440,8 +485,12 @@ class ItemBatchCRUD:
                 setattr(entity, key, value)
 
         db_model.db.session.add(entity)
-        db_model.db.session.commit()
-        return entity
+        try:
+            db_model.db.session.commit()
+        except IntegrityError:
+            db_model.db.session.rollback()
+            return False
+        return True
 
     @staticmethod
     def delete_item_batch(id_):
