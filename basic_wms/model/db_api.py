@@ -445,7 +445,7 @@ class ItemBatchCRUD:
         {'id': int, 'deleted': bool, 'quantity': str,
          'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
         """
-        return db_model.ItemBatchSQLA.get_item_batch(id_)
+        return db_model.ItemBatchSQLA.get_item_batch(id_).serialize
 
     @staticmethod
     def get_item_batches(with_deleted=False):
@@ -476,7 +476,7 @@ class ItemBatchCRUD:
         for i in ('warehouse', 'supplier', 'item_type'):
             kwargs[i] = locals()[i]
 
-        entity = ItemBatchCRUD.get_item_batch(id_)
+        entity = db_model.ItemBatchSQLA.get_item_batch(id_)
         for key, value in kwargs.items():
             if value is not None:
                 setattr(entity, key, value)
@@ -490,7 +490,7 @@ class ItemBatchCRUD:
         Marks item_batch with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        item_batch= ItemBatchCRUD.get_item_batch(id_=id_)
+        item_batch= db_model.ItemBatchSQLA.get_item_batch(id_=id_)
         if not item_batch.deleted:
             item_batch.deleted = True
             db_model.db.session.add(item_batch)
@@ -505,7 +505,7 @@ class ItemBatchCRUD:
         Marks item_batch with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        item_batch = ItemBatchCRUD.get_item_batch(id_=id_)
+        item_batch = db_model.ItemBatchSQLA.get_item_batch(id_=id_)
         if item_batch.deleted:
             item_batch.deleted = False
             db_model.db.session.add(item_batch)
