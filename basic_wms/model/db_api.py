@@ -45,12 +45,10 @@ class WarehouseCRUD:
         """
         warehouse = db_model.WarehouseSQLA(name=name, location=location)
         db_model.db.session.add(warehouse)
-        try:
-            db_model.db.session.commit()
-        except IntegrityError:
-            db_model.db.session.rollback()
+        if db_commit_with_integrity_handling(db_model.db.session):
+            return warehouse.id_
+        else:
             return None
-        return warehouse.id_
 
     @staticmethod
     def get_warehouse(id_):
@@ -83,12 +81,7 @@ class WarehouseCRUD:
             if value is not None:
                 setattr(entity, key, value)
         db_model.db.session.add(entity)
-        try:
-            db_model.db.session.commit()
-        except IntegrityError:
-            db_model.db.session.rollback()
-            return False
-        return True
+        return db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
     def delete_warehouse(id_):
@@ -165,12 +158,10 @@ class SupplierCRUD:
         supplier = db_model.SupplierSQLA(VATIN=VATIN, name=name,
                                          location=location)
         db_model.db.session.add(supplier)
-        try:
-            db_model.db.session.commit()
-        except IntegrityError:
-            db_model.db.session.rollback()
+        if db_commit_with_integrity_handling(db_model.db.session):
+            return supplier.id_
+        else:
             return None
-        return supplier.id_
 
 
     @staticmethod
@@ -206,12 +197,7 @@ class SupplierCRUD:
             if value is not None:
                 setattr(entity, key, value)
         db_model.db.session.add(entity)
-        try:
-            db_model.db.session.commit()
-        except IntegrityError:
-            db_model.db.session.rollback()
-            return False
-        return True
+        return db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
     def delete_supplier(id_):
@@ -300,12 +286,10 @@ class ItemTypeCRUD:
                                           manufacturer=manufacturer,
                                           unit_of_measure=unit_of_measure)
         db_model.db.session.add(item_type)
-        try:
-            db_model.db.session.commit()
-        except IntegrityError:
-            db_model.db.session.rollback()
+        if db_commit_with_integrity_handling(db_model.db.session):
+            return item_type.id_
+        else:
             return None
-        return item_type.id_
 
     @staticmethod
     def get_item_type(id_):
@@ -341,12 +325,7 @@ class ItemTypeCRUD:
             if value is not None:
                 setattr(entity, key, value)
         db_model.db.session.add(entity)
-        try:
-            db_model.db.session.commit()
-        except IntegrityError:
-            db_model.db.session.rollback()
-            return False
-        return True
+        return db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
     def delete_item_type(id_):
@@ -443,12 +422,10 @@ class ItemBatchCRUD:
         item_batch = db_model.ItemBatchSQLA(quantity=quantity, warehouse=warehouse,
                                             supplier=supplier, item_type=item_type)
         db_model.db.session.add(item_batch)
-        try:
-            db_model.db.session.commit()
-        except IntegrityError:
-            db_model.db.session.rollback()
+        if db_commit_with_integrity_handling(db_model.db.session):
+            return item_batch.id_
+        else:
             return None
-        return item_batch.id_
 
     @staticmethod
     def get_item_batch(id_):
@@ -471,7 +448,7 @@ class ItemBatchCRUD:
     def update_item_batch(id_, quantity=None, warehouse_id=None,
                           supplier_id=None, item_type_id=None):
         """
-        Updates in db quantity and/or warehouse and/or supplier
+        Updates in db quantity_id and/or warehouse_id and/or supplier_id
         and/or item_type of an item_batch with given *id_*.
         In case of IntegrityError returns False, otherwise returns True.
         """
@@ -479,9 +456,10 @@ class ItemBatchCRUD:
         supplier = db_model.SupplierSQLA.get_supplier(supplier_id)
         item_type = db_model.ItemTypeSQLA.get_item_type(item_type_id)
 
-        # creating dictionary of all arguments, but *id_*
-        kwargs = locals()
-        kwargs.pop("id_")
+        # creating dictionary of all relevant variables
+        kwargs = dict()
+        for i in ('warehouse', 'supplier', 'item_type'):
+            kwargs[i] = locals()[i]
 
         entity = ItemBatchCRUD.get_item_batch(id_)
         for key, value in kwargs.items():
@@ -489,12 +467,7 @@ class ItemBatchCRUD:
                 setattr(entity, key, value)
 
         db_model.db.session.add(entity)
-        try:
-            db_model.db.session.commit()
-        except IntegrityError:
-            db_model.db.session.rollback()
-            return False
-        return True
+        return db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
     def delete_item_batch(id_):
@@ -525,3 +498,20 @@ class ItemBatchCRUD:
             return True
         else:
             return False
+
+                                #############
+                                #  HELPERS  #
+                                #############
+
+
+def db_commit_with_integrity_handling(db_session):
+    """
+    Takes SQLAlchemy session. Returns False if there was an IntegrityError
+    during commit, otherwise returns True.
+    """
+    try:
+        db_session.commit()
+    except IntegrityError:
+        db_session.rollback()
+        return False
+    return True
