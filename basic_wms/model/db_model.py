@@ -50,7 +50,7 @@ class WarehouseSQLA(db.Model, CommonFieldsSQLA):
         return self.__str__()
 
     @staticmethod
-    def get_warehouse(id_):
+    def get_one(id_):
         """
         Returns individual warehouse with given *id*
         or None if there is no such a warehouse.
@@ -62,7 +62,7 @@ class WarehouseSQLA(db.Model, CommonFieldsSQLA):
             return None
 
     @staticmethod
-    def get_warehouses():
+    def get_all():
         """ Yields all warehouses."""
         warehouses = WarehouseSQLA.query.all()
         for warehouse in warehouses:
@@ -121,7 +121,7 @@ class ItemTypeSQLA(db.Model, CommonFieldsSQLA):
         return "<ItemType #{}, name: {}>".format(self._id, self._name)
 
     @staticmethod
-    def get_item_type(id_):
+    def get_one(id_):
         """
         Returns individual item_type with given *id*
         or None if there is no such an item_type.
@@ -133,7 +133,7 @@ class ItemTypeSQLA(db.Model, CommonFieldsSQLA):
             return None
 
     @staticmethod
-    def get_item_types():
+    def get_all():
         """ Yields all item_types."""
         item_types = ItemTypeSQLA.query.all()
         for item_type in item_types:
@@ -205,7 +205,7 @@ class SupplierSQLA(db.Model, CommonFieldsSQLA):
         return "<Supplier #{}, name: {}>".format(self._id, self._name)
 
     @staticmethod
-    def get_supplier(id_):
+    def get_one(id_):
         """
         Returns individual supplier with given *id*
         or None if there is no such a supplier.
@@ -217,7 +217,7 @@ class SupplierSQLA(db.Model, CommonFieldsSQLA):
             return None
 
     @staticmethod
-    def get_suppliers():
+    def get_all():
         """ Yields all suppliers."""
         suppliers = SupplierSQLA.query.all()
         for supplier in suppliers:
@@ -297,7 +297,7 @@ class ItemBatchSQLA(db.Model, CommonFieldsSQLA):
         return "<ItemBatch #{}>".format(self._id)
 
     @staticmethod
-    def get_item_batch(id_):
+    def get_one(id_):
         """
         Returns individual item_batch with given *id*
         or None if there is no such an item_type.
@@ -309,7 +309,7 @@ class ItemBatchSQLA(db.Model, CommonFieldsSQLA):
             return None
 
     @staticmethod
-    def get_item_batches():
+    def get_all():
         """ Yields all item_batches."""
         item_batches = ItemBatchSQLA.query.all()
         for item_batch in item_batches:

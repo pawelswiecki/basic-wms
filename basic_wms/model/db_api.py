@@ -1,5 +1,7 @@
 print(" # db_api.py")
 
+# from abc import ABCMeta, abstractmethod
+
 from sqlalchemy.exc import IntegrityError
 
 from basic_wms.model import db_model
@@ -12,6 +14,7 @@ from basic_wms.model import db_model
                                 ###############
                                 #  WAREHOUSE  #
                                 ###############
+
 
 class WarehouseCRUD:
     @staticmethod
@@ -33,26 +36,26 @@ class WarehouseCRUD:
             return None
 
     @staticmethod
-    def get_warehouse(id_):
+    def get_one(id_):
         """
         Returns dictionary with data about warehouse with *id_* id:
         {'id': int, 'deleted': bool, 'name': str, 'location': str}.
         """
-        return db_model.WarehouseSQLA.get_warehouse(id_).serialize
+        return db_model.WarehouseSQLA.get_one(id_).serialize
 
     @staticmethod
-    def get_warehouses(with_deleted=False):
+    def get_all(with_deleted=False):
         """
         Yields all warehouses in serialized form:
         {'id': int, 'deleted': bool, 'name': str, 'location': str}.
         """
-        warehouses = db_model.WarehouseSQLA.get_warehouses()
+        warehouses = db_model.WarehouseSQLA.get_all()
         for warehouse in warehouses:
             if not warehouse.deleted or with_deleted:
                 yield warehouse.serialize
 
     @staticmethod
-    def update_warehouse(id_, name=None, location=None):
+    def update(id_, name=None, location=None):
         """
         Updates in db name and/or location of a warehouse with given *id_*.
         In case of IntegrityError returns False, otherwise returns True.
@@ -61,7 +64,7 @@ class WarehouseCRUD:
         kwargs = locals()
         kwargs.pop("id_")
 
-        entity = db_model.WarehouseSQLA.get_warehouse(id_)
+        entity = db_model.WarehouseSQLA.get_one(id_)
         for key, value in kwargs.items():
             if value is not None:
                 setattr(entity, key, value)
@@ -69,12 +72,12 @@ class WarehouseCRUD:
         return db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
-    def delete_warehouse(id_):
+    def delete(id_):
         """
         Marks warehouse with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        warehouse = db_model.WarehouseSQLA.get_warehouse(id_=id_)
+        warehouse = db_model.WarehouseSQLA.get_one(id_=id_)
         if not warehouse.deleted:
             warehouse.deleted = True
             db_model.db.session.add(warehouse)
@@ -84,12 +87,12 @@ class WarehouseCRUD:
             return False
 
     @staticmethod
-    def undelete_warehouse(id_):
+    def undelete(id_):
         """
         Marks warehouse with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        warehouse = db_model.WarehouseSQLA.get_warehouse(id_=id_)
+        warehouse = db_model.WarehouseSQLA.get_one(id_=id_)
         if warehouse.deleted:
             warehouse.deleted = False
             db_model.db.session.add(warehouse)
@@ -126,28 +129,28 @@ class SupplierCRUD:
 
 
     @staticmethod
-    def get_supplier(id_):
+    def get_one(id_):
         """
         Returns dictionary with serialized object's fields:
         {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
          'location': str}.
         """
-        return db_model.SupplierSQLA.get_supplier(id_).serialize
+        return db_model.SupplierSQLA.get_one(id_).serialize
 
     @staticmethod
-    def get_suppliers(with_deleted=False):
+    def get_all(with_deleted=False):
         """
         Yields all suppliers in serialized form:
          {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
          'location': str}.
         """
-        suppliers = db_model.SupplierSQLA.get_suppliers()
+        suppliers = db_model.SupplierSQLA.get_all()
         for supplier in suppliers:
             if not supplier.deleted or with_deleted:
                 yield supplier.serialize
 
     @staticmethod
-    def update_supplier(id_, VATIN=None, name=None, location=None):
+    def update(id_, VATIN=None, name=None, location=None):
         """
         Updates in db VATIN and/or name and/or location of a supplier
         with given *id_*.
@@ -157,7 +160,7 @@ class SupplierCRUD:
         kwargs = locals()
         kwargs.pop("id_")
 
-        entity = db_model.SupplierSQLA.get_supplier(id_)
+        entity = db_model.SupplierSQLA.get_one(id_)
         for key, value in kwargs.items():
             if value is not None:
                 setattr(entity, key, value)
@@ -165,12 +168,12 @@ class SupplierCRUD:
         return db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
-    def delete_supplier(id_):
+    def delete(id_):
         """
         Marks supplier with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        supplier = db_model.SupplierSQLA.get_supplier(id_=id_)
+        supplier = db_model.SupplierSQLA.get_one(id_=id_)
         if not supplier.deleted:
             supplier.deleted = True
             db_model.db.session.add(supplier)
@@ -180,12 +183,12 @@ class SupplierCRUD:
             return False
 
     @staticmethod
-    def undelete_supplier(id_):
+    def undelete(id_):
         """
         Marks supplier with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        supplier = db_model.SupplierSQLA.get_supplier(id_=id_)
+        supplier = db_model.SupplierSQLA.get_one(id_=id_)
         if supplier.deleted:
             supplier.deleted = False
             db_model.db.session.add(supplier)
@@ -223,28 +226,28 @@ class ItemTypeCRUD:
             return None
 
     @staticmethod
-    def get_item_type(id_):
+    def get_one(id_):
         """
         Returns dictionary with serialized object's fields:
         {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
          'manufacturer': str, 'unit_of_measure': str}.
         """
-        return db_model.ItemTypeSQLA.get_item_type(id_).serialize
+        return db_model.ItemTypeSQLA.get_one(id_).serialize
 
     @staticmethod
-    def get_item_types(with_deleted=False):
+    def get_all(with_deleted=False):
         """
         Yields all item_types in serialized form:
         {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
          'manufacturer': str, 'unit_of_measure': str}.
         """
-        item_types = db_model.ItemTypeSQLA.get_item_types()
+        item_types = db_model.ItemTypeSQLA.get_all()
         for item_type in item_types:
             if not item_type.deleted or with_deleted:
                 yield item_type.serialize
 
     @staticmethod
-    def update_item_type(id_, name=None, item_model=None, manufacturer=None,
+    def update(id_, name=None, item_model=None, manufacturer=None,
                          unit_of_measure=None):
         """
         Updates in db name and/or item_model and/or manufacturer
@@ -255,7 +258,7 @@ class ItemTypeCRUD:
         kwargs = locals()
         kwargs.pop("id_")
 
-        entity = db_model.ItemTypeSQLA.get_item_type(id_)
+        entity = db_model.ItemTypeSQLA.get_one(id_)
         for key, value in kwargs.items():
             if value is not None:
                 setattr(entity, key, value)
@@ -263,12 +266,12 @@ class ItemTypeCRUD:
         return db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
-    def delete_item_type(id_):
+    def delete(id_):
         """
         Marks item_type with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        item_type = db_model.ItemTypeSQLA.get_item_type(id_=id_)
+        item_type = db_model.ItemTypeSQLA.get_one(id_=id_)
         if not item_type.deleted:
             item_type.deleted = True
             db_model.db.session.add(item_type)
@@ -278,12 +281,12 @@ class ItemTypeCRUD:
             return False
 
     @staticmethod
-    def undelete_item_type(id_):
+    def undelete(id_):
         """
         Marks item_type with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        item_type = db_model.ItemTypeSQLA.get_item_type(id_=id_)
+        item_type = db_model.ItemTypeSQLA.get_one(id_=id_)
         if item_type.deleted:
             item_type.deleted = False
             db_model.db.session.add(item_type)
@@ -313,9 +316,9 @@ class ItemBatchCRUD:
         assert isinstance(item_type_id, int),\
             'ItemBatchCRUD.create(): item_type_id should be an integer'
 
-        warehouse = db_model.WarehouseSQLA.get_warehouse(warehouse_id)
-        supplier = db_model.SupplierSQLA.get_supplier(supplier_id)
-        item_type = db_model.ItemTypeSQLA.get_item_type(item_type_id)
+        warehouse = db_model.WarehouseSQLA.get_one(warehouse_id)
+        supplier = db_model.SupplierSQLA.get_one(supplier_id)
+        item_type = db_model.ItemTypeSQLA.get_one(item_type_id)
 
         item_batch = db_model.ItemBatchSQLA(quantity=quantity, warehouse=warehouse,
                                             supplier=supplier, item_type=item_type)
@@ -326,44 +329,44 @@ class ItemBatchCRUD:
             return None
 
     @staticmethod
-    def get_item_batch(id_):
+    def get_one(id_):
         """
         Returns dictionary with serialized object's fields:
         {'id': int, 'deleted': bool, 'quantity': str,
          'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
         """
-        return db_model.ItemBatchSQLA.get_item_batch(id_).serialize
+        return db_model.ItemBatchSQLA.get_one(id_).serialize
 
     @staticmethod
-    def get_item_batches(with_deleted=False):
+    def get_all(with_deleted=False):
         """
         Yields all item_batches in serialized form:
         {'id': int, 'deleted': bool, 'quantity': str,
          'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
         """
-        item_batches = db_model.ItemBatchSQLA.get_item_batches()
+        item_batches = db_model.ItemBatchSQLA.get_all()
         for item_batch in item_batches:
             if not item_batch.deleted or with_deleted:
                 yield item_batch.serialize
 
     @staticmethod
-    def update_item_batch(id_, quantity=None, warehouse_id=None,
+    def update(id_, quantity=None, warehouse_id=None,
                           supplier_id=None, item_type_id=None):
         """
         Updates in db quantity_id and/or warehouse_id and/or supplier_id
         and/or item_type of an item_batch with given *id_*.
         In case of IntegrityError returns False, otherwise returns True.
         """
-        warehouse = db_model.WarehouseSQLA.get_warehouse(warehouse_id)
-        supplier = db_model.SupplierSQLA.get_supplier(supplier_id)
-        item_type = db_model.ItemTypeSQLA.get_item_type(item_type_id)
+        warehouse = db_model.WarehouseSQLA.get_one(warehouse_id)
+        supplier = db_model.SupplierSQLA.get_one(supplier_id)
+        item_type = db_model.ItemTypeSQLA.get_one(item_type_id)
 
         # creating dictionary of all relevant variables
         kwargs = dict()
         for i in ('warehouse', 'supplier', 'item_type'):
             kwargs[i] = locals()[i]
 
-        entity = db_model.ItemBatchSQLA.get_item_batch(id_)
+        entity = db_model.ItemBatchSQLA.get_one(id_)
         for key, value in kwargs.items():
             if value is not None:
                 setattr(entity, key, value)
@@ -372,12 +375,12 @@ class ItemBatchCRUD:
         return db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
-    def delete_item_batch(id_):
+    def delete(id_):
         """
         Marks item_batch with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        item_batch= db_model.ItemBatchSQLA.get_item_batch(id_=id_)
+        item_batch= db_model.ItemBatchSQLA.get_one(id_=id_)
         if not item_batch.deleted:
             item_batch.deleted = True
             db_model.db.session.add(item_batch)
@@ -387,12 +390,12 @@ class ItemBatchCRUD:
             return False
 
     @staticmethod
-    def undelete_item_batch(id_):
+    def undelete(id_):
         """
         Marks item_batch with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        item_batch = db_model.ItemBatchSQLA.get_item_batch(id_=id_)
+        item_batch = db_model.ItemBatchSQLA.get_one(id_=id_)
         if item_batch.deleted:
             item_batch.deleted = False
             db_model.db.session.add(item_batch)
