@@ -14,35 +14,17 @@ from basic_wms.model import db_model
                                 ###############
 
 class WarehouseCRUD:
-    def __init__(self, name, location):
-        """ Inits WarehouseCRUD object and adds new warehouse to db."""
-        self._name = name
-        assert isinstance(self._name, str), 'name should be a string'
-
-        self._location = location
-        assert isinstance(self._location, str), 'location should be a string'
-
-        # self._id == None if there was IntegrityError
-        self._id = self.create(self._name, self._location)
-        
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def location(self):
-        return self._location
-
-    @property
-    def id_(self):
-        return self._id
-
     @staticmethod
     def create(name, location):
         """
         Adds warehouse to database and returns its *id* or None in case
         of IntegrityError.
         """
+        assert isinstance(name, str),\
+            'WarehouseCRUD.create(): name should be a string'
+        assert isinstance(location, str),\
+            'WarehouseCRUD.create(): location should be a string'
+
         warehouse = db_model.WarehouseSQLA(name=name, location=location)
         db_model.db.session.add(warehouse)
         if db_commit_with_integrity_handling(db_model.db.session):
@@ -116,48 +98,24 @@ class WarehouseCRUD:
         else:
             return False
 
-
                                 ##############
                                 #  SUPPLIER  #
                                 ##############
 
 class SupplierCRUD:
-    def __init__(self, VATIN, name, location):
-        """ Inits SupplierCRUD object and adds new supplier to db."""
-        self._VATIN = VATIN
-        assert isinstance(self._VATIN, str), 'VATIN should be a string'
-
-        self._name = name
-        assert isinstance(self._name, str), 'name should be a string'
-
-        self._location = location
-        assert isinstance(self._location, str), 'location should be a string'
-
-        # self._id == None if there was IntegrityError
-        self._id = self.create(self._VATIN, self._name, self._location)
-
-    @property
-    def VATIN(self):
-        return self._VATIN
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def location(self):
-        return self._location
-
-    @property
-    def id_(self):
-        return self._id
-
     @staticmethod
     def create(VATIN, name, location):
         """
         Adds supplier to database and returns its *id* or None in case
         of IntegrityError.
         """
+        assert isinstance(VATIN, str),\
+            'SupplierCRUD.create(): VATIN should be a string'
+        assert isinstance(name, str),\
+            'SupplierCRUD.create(): name should be a string'
+        assert isinstance(location, str),\
+            'SupplierCRUD.create(): location should be a string'
+
         supplier = db_model.SupplierSQLA(VATIN=VATIN, name=name,
                                          location=location)
         db_model.db.session.add(supplier)
@@ -242,53 +200,19 @@ class SupplierCRUD:
 
 
 class ItemTypeCRUD:
-    def __init__(self, name, item_model, manufacturer, unit_of_measure):
-        """ Inits SupplierCRUD object and adds new supplier to db."""
-        self._name = name
-        assert isinstance(self._name, str), 'name should be a string'
-
-        self._item_model= item_model
-        assert isinstance(self._item_model, str),\
-            'item_model should be a string'
-
-        self._manufacturer = manufacturer
-        assert isinstance(self._manufacturer, str),\
-            'manufacturer should be a string'
-
-        self._unit_of_measure = unit_of_measure
-        assert isinstance(self._unit_of_measure, str),\
-            'unit_of_measure should be a string'
-
-        # self._id == None if there was IntegrityError
-        self._id = self.create(self._name, self._item_model, self._manufacturer,
-                               self._unit_of_measure)
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def item_model(self):
-        return self._item_model
-
-    @property
-    def manufacturer(self):
-        return self._manufacturer
-
-    @property
-    def unit_of_measure(self):
-        return self._unit_of_measure
-
-    @property
-    def id_(self):
-        return self._id
-
     @staticmethod
     def create(name, item_model, manufacturer, unit_of_measure):
         """
         Adds new item type to db and returns its *id* or None in case of
         IntegrityError.
         """
+        assert isinstance(item_model, str),\
+            'ItemTypeCRUD.create(): item_model should be a string'
+        assert isinstance(manufacturer, str),\
+            'ItemTypeCRUD.create(): manufacturer should be a string'
+        assert isinstance(unit_of_measure, str),\
+            'ItemTypeCRUD.create(): unit_of_measure should be a string'
+
         item_type = db_model.ItemTypeSQLA(name=name, item_model=item_model,
                                           manufacturer=manufacturer,
                                           unit_of_measure=unit_of_measure)
@@ -374,58 +298,21 @@ class ItemTypeCRUD:
 
 
 class ItemBatchCRUD:
-    def __init__(self, quantity, warehouse_id, supplier_id, item_type_id):
-        """ Inits SupplierCRUD object and adds new supplier to db."""
-        self._quantity = quantity
-        assert isinstance(self._quantity, int),\
-            'quantity should be an integer'
-
-        self._warehouse_id = warehouse_id
-        assert isinstance(self._warehouse_id, int),\
-            'warehouse_id should be an integer'
-
-        self._supplier_id = supplier_id
-        assert isinstance(self._supplier_id, int),\
-            'supplier_id should be an integer'
-
-        self._item_type_id = item_type_id
-        assert isinstance(self._item_type_id, int),\
-            'item_type_id should be an integer'
-
-        # self._id == None if there was IntegrityError
-        self._id = self.create(self._quantity, self._warehouse_id,
-                               self._supplier_id, self._item_type_id)
-
-    @property
-    def quantity(self):
-        return self._quantity
-
-    @property
-    def warehouse_id(self):
-        return self._warehouse_id
-
-    @property
-    def quantity(self):
-        return self._quantity
-
-    @property
-    def supplier_id(self):
-        return self._supplier_id
-
-    @property
-    def item_type_id(self):
-        return self._item_type_id
-
-    @property
-    def id_(self):
-        return self._id
-
     @staticmethod
     def create(quantity, warehouse_id, supplier_id, item_type_id):
         """
         Adds new item batch to db and returns its *id* or None in case of
         IntegrityError.
         """
+        assert isinstance(quantity, int),\
+            'ItemBatchCRUD.create(): quantity should be an integer'
+        assert isinstance(warehouse_id, int),\
+            'ItemBatchCRUD.create(): warehouse_id should be an integer'
+        assert isinstance(supplier_id, int),\
+            'ItemBatchCRUD.create(): supplier_id should be an integer'
+        assert isinstance(item_type_id, int),\
+            'ItemBatchCRUD.create(): item_type_id should be an integer'
+
         warehouse = db_model.WarehouseSQLA.get_warehouse(warehouse_id)
         supplier = db_model.SupplierSQLA.get_supplier(supplier_id)
         item_type = db_model.ItemTypeSQLA.get_item_type(item_type_id)

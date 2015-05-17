@@ -17,19 +17,19 @@ db_model.db.create_all()
 print()
 print("TESTS")
 
-print("  #aa", db_api.WarehouseCRUD(name="Warehouse 1", location="address123").id_ == 1)
-print("  #ab", db_api.WarehouseCRUD(name="Warehouse 1", location="asd").id_ is None)
-print("  #ac", db_api.WarehouseCRUD(name="Warehouse 2", location="address314").id_ == 2)
-print("  #ad", db_api.WarehouseCRUD(name="Warehouse 3", location="address4321").id_ == 3)
+print("  #aa", db_api.WarehouseCRUD.create(name="Warehouse 1", location="address123") == 1)
+print("  #ab", db_api.WarehouseCRUD.create(name="Warehouse 1", location="asd") is None)
+print("  #ac", db_api.WarehouseCRUD.create(name="Warehouse 2", location="address314") == 2)
+print("  #ad", db_api.WarehouseCRUD.create(name="Warehouse 3", location="address4321") == 3)
 
-print("  #ba", db_api.SupplierCRUD(VATIN="1234-5456-444", name="Company 1", location="address X").id_ == 1)
-print("  #bb", db_api.SupplierCRUD(VATIN="1234-5456-444", name="Company 102", location="address ASD").id_ is None)
-print("  #bc", db_api.SupplierCRUD(VATIN="9695-3766-333", name="Company 2", location="address Y").id_ == 2)
-print("  #bd", db_api.SupplierCRUD(VATIN="1010-2020-030", name="Company 3", location="address Z").id_ == 3)
+print("  #ba", db_api.SupplierCRUD.create(VATIN="1234-5456-444", name="Company 1", location="address X") == 1)
+print("  #bb", db_api.SupplierCRUD.create(VATIN="1234-5456-444", name="Company 102", location="address ASD") is None)
+print("  #bc", db_api.SupplierCRUD.create(VATIN="9695-3766-333", name="Company 2", location="address Y") == 2)
+print("  #bd", db_api.SupplierCRUD.create(VATIN="1010-2020-030", name="Company 3", location="address Z") == 3)
 
-print("  #ca", db_api.ItemTypeCRUD(name="keyboard", item_model="X-PRO 2", manufacturer="HiTex", unit_of_measure="EA").id_ == 1)
-print("  #cb", db_api.ItemTypeCRUD(name="cell phone", item_model="3310", manufacturer="Nokia", unit_of_measure="EA").id_ == 2)
-print("  #cc", db_api.ItemTypeCRUD(name="water", item_model="fresh", manufacturer="Coca-Cola", unit_of_measure="liter").id_ == 3)
+print("  #ca", db_api.ItemTypeCRUD.create(name="keyboard", item_model="X-PRO 2", manufacturer="HiTex", unit_of_measure="EA") == 1)
+print("  #cb", db_api.ItemTypeCRUD.create(name="cell phone", item_model="3310", manufacturer="Nokia", unit_of_measure="EA") == 2)
+print("  #cc", db_api.ItemTypeCRUD.create(name="water", item_model="fresh", manufacturer="Coca-Cola", unit_of_measure="liter")== 3)
 
 
 warehouses = db_api.WarehouseCRUD.get_warehouses()
@@ -49,24 +49,24 @@ item_type3 = next(item_types)
 
 
 # print("adding batches:")
-batch1 = db_api.ItemBatchCRUD(quantity=150, warehouse_id=1,
+batch1_id = db_api.ItemBatchCRUD.create(quantity=150, warehouse_id=1,
                                supplier_id=1, item_type_id=1)
-batch2 = db_api.ItemBatchCRUD(quantity=56, warehouse_id=2,
+batch2_id = db_api.ItemBatchCRUD.create(quantity=56, warehouse_id=2,
                                supplier_id=2, item_type_id=2)
-batch3 = db_api.ItemBatchCRUD(quantity=566, warehouse_id=3,
+batch3_id = db_api.ItemBatchCRUD.create(quantity=566, warehouse_id=3,
                                supplier_id=3, item_type_id=3)
 
-print("  #01", batch1.supplier_id == 1)
-print("  #02", batch2.supplier_id == 2)
-print("  #03", batch3.supplier_id == 3)
+print("  #01", db_api.ItemBatchCRUD.get_item_batch(batch1_id)['supplier_id'] == 1)
+print("  #02", db_api.ItemBatchCRUD.get_item_batch(batch2_id)['supplier_id'] == 2)
+print("  #03", db_api.ItemBatchCRUD.get_item_batch(batch3_id)['supplier_id'] == 3)
 
-print("  #04", batch1.warehouse_id == 1)
-print("  #05", batch2.warehouse_id == 2)
-print("  #06", batch3.warehouse_id == 3)
-  
-print("  #07", batch1.item_type_id == 1)
-print("  #08", batch2.item_type_id == 2)
-print("  #09", batch3.item_type_id == 3)
+print("  #04", db_api.ItemBatchCRUD.get_item_batch(batch1_id)['warehouse_id'] == 1)
+print("  #05", db_api.ItemBatchCRUD.get_item_batch(batch2_id)['warehouse_id'] == 2)
+print("  #06", db_api.ItemBatchCRUD.get_item_batch(batch3_id)['warehouse_id'] == 3)
+
+print("  #07", db_api.ItemBatchCRUD.get_item_batch(batch1_id)['item_type_id'] == 1)
+print("  #08", db_api.ItemBatchCRUD.get_item_batch(batch2_id)['item_type_id'] == 2)
+print("  #09", db_api.ItemBatchCRUD.get_item_batch(batch3_id)['item_type_id'] == 3)
 
 # print("updating warehouse:")
 warehouses = db_api.WarehouseCRUD.get_warehouses()
