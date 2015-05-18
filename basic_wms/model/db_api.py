@@ -138,6 +138,7 @@ class CRUDsCommonFields(CRUDsAbstractBase):
         else:
             return False
 
+
 class WarehouseCRUD(CRUDsCommonFields):
     SQLA_class = db_model.WarehouseSQLA
 
@@ -173,6 +174,7 @@ class WarehouseCRUD(CRUDsCommonFields):
                                 kwargs=kwargs)
         db_model.db.session.add(entity)
         return _db_commit_with_integrity_handling(db_model.db.session)
+
 
 class SupplierCRUD(CRUDsCommonFields):
     SQLA_class = db_model.SupplierSQLA
@@ -323,6 +325,7 @@ def _db_commit_with_integrity_handling(db_session):
         db_session.rollback()
         return False
     return True
+
 
 def _update_entity(entity, kwargs):
     for key, value in kwargs.items():

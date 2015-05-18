@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///model/' + DB_FILENAME
 db = SQLAlchemy(app)
 
 
-class CommonFieldsSQLA():
+class CommonFieldsSQLA:
     """
     Here fields and methods common to all SQL Alchemy ORM objects are created.
     """
