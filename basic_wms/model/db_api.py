@@ -9,10 +9,10 @@ from basic_wms.model import db_model
 
 class BaseCRUD():
     """
-    An abstract base class.
+    Kinda abstract base class.
     """
     @staticmethod
-    def create(name, location):
+    def create(*args, **kwargs):
         """
         Adds entity to current persistent data-collection
         and returns its *id* or None in case of IntegrityError.
@@ -37,7 +37,7 @@ class BaseCRUD():
 
 
     @staticmethod
-    def update(id_, name=None, location=None):
+    def update(id_, **kwargs):
         """
         Updates in db name and/or location of an entity with given *id_*.
         In case of IntegrityError returns False, otherwise returns True.
