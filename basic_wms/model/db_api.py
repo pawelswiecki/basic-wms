@@ -7,49 +7,121 @@ from sqlalchemy.exc import IntegrityError
 from basic_wms.model import db_model
 
 
-class BaseCRUD():
+class CRUDsAbstractBase:
     """
     Kinda abstract base class.
     """
     @classmethod
     def create(cls, *args, **kwargs):
-        """
-        Adds entity to current persistent data-collection
-        and returns its *id* or None in case of IntegrityError.
-        """
+        raise NotImplementedError('*create* method not implemented')
+
+    @classmethod
+    def get_one(cls, id_):
+        raise NotImplementedError('*get_one* method not implemented')
+
+    @classmethod
+    def get_all(cls, with_deleted=False):
+        raise NotImplementedError('*get_all* method not implemented')
+
+    @classmethod
+    def update(cls, id_, **kwargs):
+        raise NotImplementedError('*update* method not implemented')
+
+    @classmethod
+    def delete(cls, id_):
+        raise NotImplementedError('*delete* method not implemented')
+
+    @classmethod
+    def undelete(cls, id_):
+        raise NotImplementedError('*undelete* method not implemented')
+
+
+class CRUDsCommonFields(CRUDsAbstractBase):
+    # SQLA_class gets overwritten by children's class
+    SQLA_class = None
+
+    @classmethod
+    def create(cls, *args, **kwargs):
         raise NotImplementedError('*create* method not implemented')
 
     @classmethod
     def get_one(cls, id_):
         """
-        Returns dictionary with data about entity with *id_* id:
-        {'id': int, 'deleted': bool, 'name': str, 'location': str}.
+        Returns dictionary with data about an entity with *id_* id.
+        In case of Warehouse:
+            {'id': int, 'deleted' : bool, 'name': str, 'location': str}.
+
+        In case of Supplier:
+            {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
+             'location': str}.
+
+        In case of ItemType:
+            {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
+             'manufacturer': str, 'unit_of_measure': str}.
+
+        In case of ItemBatch:
+            {'id': int, 'deleted': bool, 'quantity': str,
+             'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
         """
-        raise NotImplementedError('*get_one* method not implemented')
+        try:
+            return cls.SQLA_class.get_one(id_).serialize
+        except AttributeError:
+            raise AttributeError("*SQLA_class* - a class of relevant SQL"
+                                 "Alchemy model - should be defined in "
+                                 "this CRUD method: {}.".format(cls))
 
     @classmethod
     def get_all(cls, with_deleted=False):
         """
-        Yields all entities in serialized form:
-        {'id': int, 'deleted': bool, 'name': str, 'location': str}.
+        Yields all entities in serialized form.
+        In case of Warehouse:
+            {'id': int, 'deleted' : bool, 'name': str, 'location': str}.
+
+        In case of Supplier:
+            {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
+             'location': str}.
+
+        In case of ItemType:
+            {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
+             'manufacturer': str, 'unit_of_measure': str}.
+
+        In case of ItemBatch:
+            {'id': int, 'deleted': bool, 'quantity': str,
+             'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
         """
-        raise NotImplementedError('*get_all* method not implemented')
+        try:
+            items = cls.SQLA_class.get_all()
+        except AttributeError:
+            raise AttributeError("*SQLA_class* - a class of relevant SQL"
+                                 "Alchemy model - should be defined in "
+                                 "this CRUD method: {}.".format(cls))
+        for item in items:
+            if not item.deleted or with_deleted:
+                yield item.serialize
 
     @classmethod
     def update(cls, id_, **kwargs):
-        """
-        Updates in db name and/or location of an entity with given *id_*.
-        In case of IntegrityError returns False, otherwise returns True.
-        """
         raise NotImplementedError('*update* method not implemented')
 
     @classmethod
     def delete(cls, id_):
         """
-        Marks entity with given *id* as deleted.
+        Marks an entity with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        raise NotImplementedError('*delete* method not implemented')
+        try:
+            item = cls.SQLA_class.get_one(id_=id_)
+        except AttributeError:
+            raise AttributeError("*SQLA_class* - a class of relevant SQL"
+                                 "Alchemy model - should be defined in "
+                                 "this CRUD method: {}.".format(cls))
+        if not item.deleted:
+            item.deleted = True
+            db_model.db.session.add(item)
+            db_model.db.session.commit()
+            return True
+        else:
+            return False
 
     @classmethod
     def undelete(cls, id_):
@@ -57,10 +129,21 @@ class BaseCRUD():
         Marks entity with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        raise NotImplementedError('*undelete* method not implemented')
+        try:
+            item = cls.SQLA_class.get_one(id_=id_)
+        except AttributeError:
+            raise AttributeError("*SQLA_class* - a class of relevant SQL"
+                                 "Alchemy model - should be defined in "
+                                 "this CRUD method: {}.".format(cls))
+        if item.deleted:
+            item.deleted = False
+            db_model.db.session.add(item)
+            db_model.db.session.commit()
+            return True
+        else:
+            return False
 
-
-class WarehouseCRUD(BaseCRUD):
+class WarehouseCRUD(CRUDsCommonFields):
     SQLA_class = db_model.WarehouseSQLA
 
     @classmethod
@@ -82,22 +165,6 @@ class WarehouseCRUD(BaseCRUD):
             return None
 
     @classmethod
-    def get_one(cls, id_):
-        """
-        Returns dictionary with data about warehouse with *id_* id:
-        {'id': int, 'deleted': bool, 'name': str, 'location': str}.
-        """
-        return _get_one(cls.SQLA_class, id_)
-
-    @classmethod
-    def get_all(cls, with_deleted=False):
-        """
-        Yields all warehouses in serialized form:
-        {'id': int, 'deleted': bool, 'name': str, 'location': str}.
-        """
-        return (item for item in _get_all(cls.SQLA_class, with_deleted))
-
-    @classmethod
     def update(cls, id_, name=None, location=None):
         """
         Updates in db name and/or location of a warehouse with given *id_*.
@@ -112,24 +179,7 @@ class WarehouseCRUD(BaseCRUD):
         db_model.db.session.add(entity)
         return _db_commit_with_integrity_handling(db_model.db.session)
 
-    @classmethod
-    def delete(cls, id_):
-        """
-        Marks warehouse with given *id* as deleted.
-        Returns True if successful, False if it was already deleted.
-        """
-        return _delete(cls.SQLA_class, id_)
-
-    @classmethod
-    def undelete(cls, id_):
-        """
-        Marks warehouse with given *id* as not deleted.
-        Returns True if successful, False if it wasn't deleted.
-        """
-        return _undelete(cls.SQLA_class, id_)
-
-
-class SupplierCRUD(BaseCRUD):
+class SupplierCRUD(CRUDsCommonFields):
     SQLA_class = db_model.SupplierSQLA
 
     @classmethod
@@ -154,24 +204,6 @@ class SupplierCRUD(BaseCRUD):
             return None
 
     @classmethod
-    def get_one(cls, id_):
-        """
-        Returns dictionary with serialized object's fields:
-        {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
-         'location': str}.
-        """
-        return _get_one(cls.SQLA_class, id_)
-
-    @classmethod
-    def get_all(cls, with_deleted=False):
-        """
-        Yields all suppliers in serialized form:
-         {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
-         'location': str}.
-        """
-        return (item for item in _get_all(cls.SQLA_class, with_deleted))
-
-    @classmethod
     def update(cls, id_, VATIN=None, name=None, location=None):
         """
         Updates in db VATIN and/or name and/or location of a supplier
@@ -187,24 +219,8 @@ class SupplierCRUD(BaseCRUD):
         db_model.db.session.add(entity)
         return _db_commit_with_integrity_handling(db_model.db.session)
 
-    @classmethod
-    def delete(cls, id_):
-        """
-        Marks supplier with given *id* as deleted.
-        Returns True if successful, False if it was already deleted.
-        """
-        return _delete(cls.SQLA_class, id_)
 
-    @classmethod
-    def undelete(cls, id_):
-        """
-        Marks supplier with given *id* as not deleted.
-        Returns True if successful, False if it wasn't deleted.
-        """
-        return _undelete(cls.SQLA_class, id_)
-
-
-class ItemTypeCRUD(BaseCRUD):
+class ItemTypeCRUD(CRUDsCommonFields):
     SQLA_class = db_model.ItemTypeSQLA
 
     @classmethod
@@ -230,24 +246,6 @@ class ItemTypeCRUD(BaseCRUD):
             return None
 
     @classmethod
-    def get_one(cls, id_):
-        """
-        Returns dictionary with serialized object's fields:
-        {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
-         'manufacturer': str, 'unit_of_measure': str}.
-        """
-        return _get_one(cls.SQLA_class, id_)
-
-    @classmethod
-    def get_all(cls, with_deleted=False):
-        """
-        Yields all item_types in serialized form:
-        {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
-         'manufacturer': str, 'unit_of_measure': str}.
-        """
-        return (item for item in _get_all(cls.SQLA_class, with_deleted))
-
-    @classmethod
     def update(cls, id_, name=None, item_model=None, manufacturer=None,
                unit_of_measure=None):
         """
@@ -264,24 +262,8 @@ class ItemTypeCRUD(BaseCRUD):
         db_model.db.session.add(entity)
         return _db_commit_with_integrity_handling(db_model.db.session)
 
-    @classmethod
-    def delete(cls, id_):
-        """
-        Marks item_type with given *id* as deleted.
-        Returns True if successful, False if it was already deleted.
-        """
-        return _delete(cls.SQLA_class, id_)
 
-    @classmethod
-    def undelete(cls, id_):
-        """
-        Marks item_type with given *id* as not deleted.
-        Returns True if successful, False if it wasn't deleted.
-        """
-        return _undelete(cls.SQLA_class, id_)
-
-
-class ItemBatchCRUD(BaseCRUD):
+class ItemBatchCRUD(CRUDsCommonFields):
     SQLA_class = db_model.ItemBatchSQLA
 
     @classmethod
@@ -312,24 +294,6 @@ class ItemBatchCRUD(BaseCRUD):
             return None
 
     @classmethod
-    def get_one(cls, id_):
-        """
-        Returns dictionary with serialized object's fields:
-        {'id': int, 'deleted': bool, 'quantity': str,
-         'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
-        """
-        return _get_one(cls.SQLA_class, id_)
-
-    @classmethod
-    def get_all(cls, with_deleted=False):
-        """
-        Yields all item_batches in serialized form:
-        {'id': int, 'deleted': bool, 'quantity': str,
-         'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
-        """
-        return (item for item in _get_all(cls.SQLA_class, with_deleted))
-
-    @classmethod
     def update(cls, id_, quantity=None, warehouse_id=None,
                supplier_id=None, item_type_id=None):
         """
@@ -351,24 +315,14 @@ class ItemBatchCRUD(BaseCRUD):
         db_model.db.session.add(entity)
         return _db_commit_with_integrity_handling(db_model.db.session)
 
-    @classmethod
-    def delete(cls, id_):
-        """
-        Marks item_batch with given *id* as deleted.
-        Returns True if successful, False if it was already deleted.
-        """
-        return _delete(cls.SQLA_class, id_)
-
-    @classmethod
-    def undelete(cls, id_):
-        """
-        Marks item_batch with given *id* as not deleted.
-        Returns True if successful, False if it wasn't deleted.
-        """
-        return _undelete(cls.SQLA_class, id_)
-
 
 # HELPER METHODS
+def test_wrapper(func, cls):
+    def inner(_, *args, **kwargs):
+        print("Arguments were: {}, {}".format(args, kwargs))
+        return func(cls, *args, **kwargs)
+    return inner
+
 def _db_commit_with_integrity_handling(db_session):
     """
     Takes SQLAlchemy session. Returns False if there was an IntegrityError
@@ -381,56 +335,8 @@ def _db_commit_with_integrity_handling(db_session):
         return False
     return True
 
-
 def _update_entity(entity, kwargs):
     for key, value in kwargs.items():
         if value is not None:
             setattr(entity, key, value)
     return entity
-
-
-def _get_one(cls, id_):
-    """
-    Returns dictionary with data about *cls* class with *id_* id.
-    """
-    return cls.get_one(id_).serialize
-
-
-def _get_all(cls, with_deleted=False):
-    """
-    Yields all elements in serialized form.
-    """
-    items = cls.get_all()
-    for item in items:
-        if not item.deleted or with_deleted:
-            yield item.serialize
-
-
-def _delete(cls, id_):
-    """
-    Marks element with given *id* as deleted.
-    Returns True if successful, False if it was already deleted.
-    """
-    item = cls.get_one(id_=id_)
-    if not item.deleted:
-        item.deleted = True
-        db_model.db.session.add(item)
-        db_model.db.session.commit()
-        return True
-    else:
-        return False
-
-
-def _undelete(cls, id_):
-    """
-    Marks item with given *id* as not deleted.
-    Returns True if successful, False if it wasn't deleted.
-    """
-    item = cls.get_one(id_=id_)
-    if item.deleted:
-        item.deleted = False
-        db_model.db.session.add(item)
-        db_model.db.session.commit()
-        return True
-    else:
-        return False
