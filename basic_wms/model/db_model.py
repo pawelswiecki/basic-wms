@@ -14,14 +14,35 @@ db = SQLAlchemy(app)
 
 class CommonFieldsSQLA():
     """
-    Here *_id* and *_deleted*, fields common to all ORM objects,
-    are created.
+    Here fields and methods common to all SQL Alchemy ORM objects are created.
     """
     _id = db.Column(db.Integer, primary_key=True, nullable=False)
     _deleted = db.Column(db.Boolean, nullable=False)
 
+    def __repr__(self):
+        return self.__str__()
+
     def init_common_fields(self):
         self._deleted = False
+
+    @classmethod
+    def get_one(cls, id_):
+        """
+        Returns individual entity with given *id*
+        or None if there is no such an entity.
+        """
+        query1 = cls.query.filter_by(_id=id_)
+        if query1.count() > 0:
+            return query1.one()
+        else:
+            return None
+
+    @classmethod
+    def get_all(cls):
+        """ Yields all entities."""
+        entities = cls.query.all()
+        for entity in entities:
+            yield entity
 
     @property
     def id_(self):
@@ -45,28 +66,6 @@ class WarehouseSQLA(db.Model, CommonFieldsSQLA):
         self.init_common_fields()
         self._name = name
         self._location = location
-
-    def __repr__(self):
-        return self.__str__()
-
-    @staticmethod
-    def get_one(id_):
-        """
-        Returns individual warehouse with given *id*
-        or None if there is no such a warehouse.
-        """
-        query1 = WarehouseSQLA.query.filter_by(_id=id_)
-        if query1.count() > 0:
-            return query1.one()
-        else:
-            return None
-
-    @staticmethod
-    def get_all():
-        """ Yields all warehouses."""
-        warehouses = WarehouseSQLA.query.all()
-        for warehouse in warehouses:
-            yield warehouse
 
     def __str__(self):
         return "<Warehouse #{}>".format(self._id)
@@ -114,30 +113,8 @@ class ItemTypeSQLA(db.Model, CommonFieldsSQLA):
         self._manufacturer = manufacturer
         self._unit_of_measure = unit_of_measure
 
-    def __repr__(self):
-        return self.__str__()
-
     def __str__(self):
         return "<ItemType #{}, name: {}>".format(self._id, self._name)
-
-    @staticmethod
-    def get_one(id_):
-        """
-        Returns individual item_type with given *id*
-        or None if there is no such an item_type.
-        """
-        query1 = ItemTypeSQLA.query.filter_by(_id=id_)
-        if query1.count() > 0:
-            return query1.one()
-        else:
-            return None
-
-    @staticmethod
-    def get_all():
-        """ Yields all item_types."""
-        item_types = ItemTypeSQLA.query.all()
-        for item_type in item_types:
-            yield item_type
 
     @property
     def name(self):
@@ -198,30 +175,8 @@ class SupplierSQLA(db.Model, CommonFieldsSQLA):
         self._name = name
         self._location = location
 
-    def __repr__(self):
-        return self.__str__()
-
     def __str__(self):
         return "<Supplier #{}, name: {}>".format(self._id, self._name)
-
-    @staticmethod
-    def get_one(id_):
-        """
-        Returns individual supplier with given *id*
-        or None if there is no such a supplier.
-        """
-        query1 = SupplierSQLA.query.filter_by(_id=id_)
-        if query1.count() > 0:
-            return query1.one()
-        else:
-            return None
-
-    @staticmethod
-    def get_all():
-        """ Yields all suppliers."""
-        suppliers = SupplierSQLA.query.all()
-        for supplier in suppliers:
-            yield supplier
 
     @property
     def VATIN(self):
@@ -290,30 +245,8 @@ class ItemBatchSQLA(db.Model, CommonFieldsSQLA):
         self._supplier = supplier
         self._item_type = item_type
 
-    def __repr__(self):
-        return self.__str__()
-
     def __str__(self):
         return "<ItemBatch #{}>".format(self._id)
-
-    @staticmethod
-    def get_one(id_):
-        """
-        Returns individual item_batch with given *id*
-        or None if there is no such an item_type.
-        """
-        query1 = ItemBatchSQLA.query.filter_by(_id=id_)
-        if query1.count() > 0:
-            return query1.one()
-        else:
-            return None
-
-    @staticmethod
-    def get_all():
-        """ Yields all item_batches."""
-        item_batches = ItemBatchSQLA.query.all()
-        for item_batch in item_batches:
-            yield item_batch
 
     @property
     def quantity(self):
