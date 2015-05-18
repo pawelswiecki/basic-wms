@@ -75,7 +75,7 @@ class WarehouseCRUD(BaseCRUD):
 
         warehouse = db_model.WarehouseSQLA(name=name, location=location)
         db_model.db.session.add(warehouse)
-        if db_commit_with_integrity_handling(db_model.db.session):
+        if _db_commit_with_integrity_handling(db_model.db.session):
             return warehouse.id_
         else:
             return None
@@ -86,7 +86,7 @@ class WarehouseCRUD(BaseCRUD):
         Returns dictionary with data about warehouse with *id_* id:
         {'id': int, 'deleted': bool, 'name': str, 'location': str}.
         """
-        return db_model.WarehouseSQLA.get_one(id_).serialize
+        return _get_one(db_model.WarehouseSQLA, id_)
 
     @staticmethod
     def get_all(with_deleted=False):
@@ -94,10 +94,7 @@ class WarehouseCRUD(BaseCRUD):
         Yields all warehouses in serialized form:
         {'id': int, 'deleted': bool, 'name': str, 'location': str}.
         """
-        warehouses = db_model.WarehouseSQLA.get_all()
-        for warehouse in warehouses:
-            if not warehouse.deleted or with_deleted:
-                yield warehouse.serialize
+        return (item for item in _get_all(db_model.WarehouseSQLA, with_deleted))
 
     @staticmethod
     def update(id_, name=None, location=None):
@@ -114,7 +111,7 @@ class WarehouseCRUD(BaseCRUD):
             if value is not None:
                 setattr(entity, key, value)
         db_model.db.session.add(entity)
-        return db_commit_with_integrity_handling(db_model.db.session)
+        return _db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
     def delete(id_):
@@ -122,14 +119,7 @@ class WarehouseCRUD(BaseCRUD):
         Marks warehouse with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        warehouse = db_model.WarehouseSQLA.get_one(id_=id_)
-        if not warehouse.deleted:
-            warehouse.deleted = True
-            db_model.db.session.add(warehouse)
-            db_model.db.session.commit()
-            return True
-        else:
-            return False
+        return _delete(db_model.WarehouseSQLA, id_)
 
     @staticmethod
     def undelete(id_):
@@ -137,14 +127,7 @@ class WarehouseCRUD(BaseCRUD):
         Marks warehouse with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        warehouse = db_model.WarehouseSQLA.get_one(id_=id_)
-        if warehouse.deleted:
-            warehouse.deleted = False
-            db_model.db.session.add(warehouse)
-            db_model.db.session.commit()
-            return True
-        else:
-            return False
+        return _undelete(db_model.WarehouseSQLA, id_)
 
 
 class SupplierCRUD(BaseCRUD):
@@ -164,7 +147,7 @@ class SupplierCRUD(BaseCRUD):
         supplier = db_model.SupplierSQLA(VATIN=VATIN, name=name,
                                          location=location)
         db_model.db.session.add(supplier)
-        if db_commit_with_integrity_handling(db_model.db.session):
+        if _db_commit_with_integrity_handling(db_model.db.session):
             return supplier.id_
         else:
             return None
@@ -177,7 +160,7 @@ class SupplierCRUD(BaseCRUD):
         {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
          'location': str}.
         """
-        return db_model.SupplierSQLA.get_one(id_).serialize
+        return _get_one(db_model.SupplierSQLA, id_)
 
     @staticmethod
     def get_all(with_deleted=False):
@@ -186,10 +169,7 @@ class SupplierCRUD(BaseCRUD):
          {'id': int, 'deleted': bool, 'VATIN': str, 'name': str,
          'location': str}.
         """
-        suppliers = db_model.SupplierSQLA.get_all()
-        for supplier in suppliers:
-            if not supplier.deleted or with_deleted:
-                yield supplier.serialize
+        return (item for item in _get_all(db_model.SupplierSQLA, with_deleted))
 
     @staticmethod
     def update(id_, VATIN=None, name=None, location=None):
@@ -207,7 +187,7 @@ class SupplierCRUD(BaseCRUD):
             if value is not None:
                 setattr(entity, key, value)
         db_model.db.session.add(entity)
-        return db_commit_with_integrity_handling(db_model.db.session)
+        return _db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
     def delete(id_):
@@ -215,14 +195,7 @@ class SupplierCRUD(BaseCRUD):
         Marks supplier with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        supplier = db_model.SupplierSQLA.get_one(id_=id_)
-        if not supplier.deleted:
-            supplier.deleted = True
-            db_model.db.session.add(supplier)
-            db_model.db.session.commit()
-            return True
-        else:
-            return False
+        return _delete(db_model.SupplierSQLA, id_)
 
     @staticmethod
     def undelete(id_):
@@ -230,14 +203,7 @@ class SupplierCRUD(BaseCRUD):
         Marks supplier with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        supplier = db_model.SupplierSQLA.get_one(id_=id_)
-        if supplier.deleted:
-            supplier.deleted = False
-            db_model.db.session.add(supplier)
-            db_model.db.session.commit()
-            return True
-        else:
-            return False
+        return _undelete(db_model.SupplierSQLA, id_)
 
 
 class ItemTypeCRUD(BaseCRUD):
@@ -258,7 +224,7 @@ class ItemTypeCRUD(BaseCRUD):
                                           manufacturer=manufacturer,
                                           unit_of_measure=unit_of_measure)
         db_model.db.session.add(item_type)
-        if db_commit_with_integrity_handling(db_model.db.session):
+        if _db_commit_with_integrity_handling(db_model.db.session):
             return item_type.id_
         else:
             return None
@@ -270,7 +236,7 @@ class ItemTypeCRUD(BaseCRUD):
         {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
          'manufacturer': str, 'unit_of_measure': str}.
         """
-        return db_model.ItemTypeSQLA.get_one(id_).serialize
+        return _get_one(db_model.ItemTypeSQLA, id_)
 
     @staticmethod
     def get_all(with_deleted=False):
@@ -279,10 +245,7 @@ class ItemTypeCRUD(BaseCRUD):
         {'id': int, 'deleted': bool, 'name': str, 'item_model': str,
          'manufacturer': str, 'unit_of_measure': str}.
         """
-        item_types = db_model.ItemTypeSQLA.get_all()
-        for item_type in item_types:
-            if not item_type.deleted or with_deleted:
-                yield item_type.serialize
+        return (item for item in _get_all(db_model.ItemTypeSQLA, with_deleted))
 
     @staticmethod
     def update(id_, name=None, item_model=None, manufacturer=None,
@@ -301,7 +264,7 @@ class ItemTypeCRUD(BaseCRUD):
             if value is not None:
                 setattr(entity, key, value)
         db_model.db.session.add(entity)
-        return db_commit_with_integrity_handling(db_model.db.session)
+        return _db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
     def delete(id_):
@@ -309,14 +272,7 @@ class ItemTypeCRUD(BaseCRUD):
         Marks item_type with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        item_type = db_model.ItemTypeSQLA.get_one(id_=id_)
-        if not item_type.deleted:
-            item_type.deleted = True
-            db_model.db.session.add(item_type)
-            db_model.db.session.commit()
-            return True
-        else:
-            return False
+        return _delete(db_model.ItemTypeSQLA, id_)
 
     @staticmethod
     def undelete(id_):
@@ -324,14 +280,7 @@ class ItemTypeCRUD(BaseCRUD):
         Marks item_type with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        item_type = db_model.ItemTypeSQLA.get_one(id_=id_)
-        if item_type.deleted:
-            item_type.deleted = False
-            db_model.db.session.add(item_type)
-            db_model.db.session.commit()
-            return True
-        else:
-            return False
+        return _undelete(db_model.ItemTypeSQLA, id_)
 
 
 class ItemBatchCRUD(BaseCRUD):
@@ -357,7 +306,7 @@ class ItemBatchCRUD(BaseCRUD):
         item_batch = db_model.ItemBatchSQLA(quantity=quantity, warehouse=warehouse,
                                             supplier=supplier, item_type=item_type)
         db_model.db.session.add(item_batch)
-        if db_commit_with_integrity_handling(db_model.db.session):
+        if _db_commit_with_integrity_handling(db_model.db.session):
             return item_batch.id_
         else:
             return None
@@ -369,7 +318,7 @@ class ItemBatchCRUD(BaseCRUD):
         {'id': int, 'deleted': bool, 'quantity': str,
          'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
         """
-        return db_model.ItemBatchSQLA.get_one(id_).serialize
+        return _get_one(db_model.ItemBatchSQLA, id_)
 
     @staticmethod
     def get_all(with_deleted=False):
@@ -378,10 +327,7 @@ class ItemBatchCRUD(BaseCRUD):
         {'id': int, 'deleted': bool, 'quantity': str,
          'warehouse_id': int, 'supplier_id': int, 'item_type_id': int}.
         """
-        item_batches = db_model.ItemBatchSQLA.get_all()
-        for item_batch in item_batches:
-            if not item_batch.deleted or with_deleted:
-                yield item_batch.serialize
+        return (item for item in _get_all(db_model.ItemBatchSQLA, with_deleted))
 
     @staticmethod
     def update(id_, quantity=None, warehouse_id=None,
@@ -406,7 +352,7 @@ class ItemBatchCRUD(BaseCRUD):
                 setattr(entity, key, value)
 
         db_model.db.session.add(entity)
-        return db_commit_with_integrity_handling(db_model.db.session)
+        return _db_commit_with_integrity_handling(db_model.db.session)
 
     @staticmethod
     def delete(id_):
@@ -414,14 +360,7 @@ class ItemBatchCRUD(BaseCRUD):
         Marks item_batch with given *id* as deleted.
         Returns True if successful, False if it was already deleted.
         """
-        item_batch= db_model.ItemBatchSQLA.get_one(id_=id_)
-        if not item_batch.deleted:
-            item_batch.deleted = True
-            db_model.db.session.add(item_batch)
-            db_model.db.session.commit()
-            return True
-        else:
-            return False
+        return _delete(db_model.ItemBatchSQLA, id_)
 
     @staticmethod
     def undelete(id_):
@@ -429,17 +368,11 @@ class ItemBatchCRUD(BaseCRUD):
         Marks item_batch with given *id* as not deleted.
         Returns True if successful, False if it wasn't deleted.
         """
-        item_batch = db_model.ItemBatchSQLA.get_one(id_=id_)
-        if item_batch.deleted:
-            item_batch.deleted = False
-            db_model.db.session.add(item_batch)
-            db_model.db.session.commit()
-            return True
-        else:
-            return False
+        return _undelete(db_model.ItemBatchSQLA, id_)
 
 
-def db_commit_with_integrity_handling(db_session):
+# HELPER METHODS
+def _db_commit_with_integrity_handling(db_session):
     """
     Takes SQLAlchemy session. Returns False if there was an IntegrityError
     during commit, otherwise returns True.
@@ -450,3 +383,50 @@ def db_commit_with_integrity_handling(db_session):
         db_session.rollback()
         return False
     return True
+
+
+def _get_one(cls, id_):
+    """
+    Returns dictionary with data about *cls* class with *id_* id.
+    """
+    return cls.get_one(id_).serialize
+
+
+def _get_all(cls, with_deleted=False):
+    """
+    Yields all elements in serialized form.
+    """
+    items = cls.get_all()
+    for item in items:
+        if not item.deleted or with_deleted:
+            yield item.serialize
+
+
+def _delete(cls, id_):
+    """
+    Marks element with given *id* as deleted.
+    Returns True if successful, False if it was already deleted.
+    """
+    item = cls.get_one(id_=id_)
+    if not item.deleted:
+        item.deleted = True
+        db_model.db.session.add(item)
+        db_model.db.session.commit()
+        return True
+    else:
+        return False
+
+
+def _undelete(cls, id_):
+    """
+    Marks item with given *id* as not deleted.
+    Returns True if successful, False if it wasn't deleted.
+    """
+    item = cls.get_one(id_=id_)
+    if item.deleted:
+        item.deleted = False
+        db_model.db.session.add(item)
+        db_model.db.session.commit()
+        return True
+    else:
+        return False
