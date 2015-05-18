@@ -39,6 +39,9 @@ class CRUDsAbstractBase:
 class CRUDsCommonFields(CRUDsAbstractBase):
     # SQLA_class gets overwritten by children's class
     SQLA_class = None
+    attribute_error_message = "*SQLA_class* - a class of relevant SQL " \
+                              "Alchemy model - should be defined in " \
+                              "the following CRUD method: {}."
 
     @classmethod
     def create(cls, *args, **kwargs):
@@ -66,9 +69,7 @@ class CRUDsCommonFields(CRUDsAbstractBase):
         try:
             return cls.SQLA_class.get_one(id_).serialize
         except AttributeError:
-            raise AttributeError("*SQLA_class* - a class of relevant SQL"
-                                 "Alchemy model - should be defined in "
-                                 "this CRUD method: {}.".format(cls))
+            raise AttributeError(cls.attribute_error_message.format(cls))
 
     @classmethod
     def get_all(cls, with_deleted=False):
@@ -92,9 +93,7 @@ class CRUDsCommonFields(CRUDsAbstractBase):
         try:
             items = cls.SQLA_class.get_all()
         except AttributeError:
-            raise AttributeError("*SQLA_class* - a class of relevant SQL"
-                                 "Alchemy model - should be defined in "
-                                 "this CRUD method: {}.".format(cls))
+            raise AttributeError(cls.attribute_error_message.format(cls))
         for item in items:
             if not item.deleted or with_deleted:
                 yield item.serialize
@@ -112,9 +111,7 @@ class CRUDsCommonFields(CRUDsAbstractBase):
         try:
             item = cls.SQLA_class.get_one(id_=id_)
         except AttributeError:
-            raise AttributeError("*SQLA_class* - a class of relevant SQL"
-                                 "Alchemy model - should be defined in "
-                                 "this CRUD method: {}.".format(cls))
+            raise AttributeError(cls.attribute_error_message.format(cls))
         if not item.deleted:
             item.deleted = True
             db_model.db.session.add(item)
@@ -132,9 +129,7 @@ class CRUDsCommonFields(CRUDsAbstractBase):
         try:
             item = cls.SQLA_class.get_one(id_=id_)
         except AttributeError:
-            raise AttributeError("*SQLA_class* - a class of relevant SQL"
-                                 "Alchemy model - should be defined in "
-                                 "this CRUD method: {}.".format(cls))
+            raise AttributeError(cls.attribute_error_message.format(cls))
         if item.deleted:
             item.deleted = False
             db_model.db.session.add(item)
@@ -317,12 +312,6 @@ class ItemBatchCRUD(CRUDsCommonFields):
 
 
 # HELPER METHODS
-def test_wrapper(func, cls):
-    def inner(_, *args, **kwargs):
-        print("Arguments were: {}, {}".format(args, kwargs))
-        return func(cls, *args, **kwargs)
-    return inner
-
 def _db_commit_with_integrity_handling(db_session):
     """
     Takes SQLAlchemy session. Returns False if there was an IntegrityError
