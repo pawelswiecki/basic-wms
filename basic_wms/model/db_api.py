@@ -7,16 +7,61 @@ from sqlalchemy.exc import IntegrityError
 from basic_wms.model import db_model
 
 
+class BaseCRUD():
+    """
+    An abstract base class.
+    """
+    @staticmethod
+    def create(name, location):
+        """
+        Adds entity to current persistent data-collection
+        and returns its *id* or None in case of IntegrityError.
+        """
+        raise NotImplementedError('*create* method not implemented')
 
-# TODO
-# - make that no ORM objects are leaking to user of this API
+    @staticmethod
+    def get_one(id_):
+        """
+        Returns dictionary with data about entity with *id_* id:
+        {'id': int, 'deleted': bool, 'name': str, 'location': str}.
+        """
+        raise NotImplementedError('*get_one* method not implemented')
 
-                                ###############
-                                #  WAREHOUSE  #
-                                ###############
+    @staticmethod
+    def get_all(with_deleted=False):
+        """
+        Yields all entities in serialized form:
+        {'id': int, 'deleted': bool, 'name': str, 'location': str}.
+        """
+        raise NotImplementedError('*get_all* method not implemented')
 
 
-class WarehouseCRUD:
+    @staticmethod
+    def update(id_, name=None, location=None):
+        """
+        Updates in db name and/or location of an entity with given *id_*.
+        In case of IntegrityError returns False, otherwise returns True.
+        """
+        raise NotImplementedError('*update* method not implemented')
+
+    @staticmethod
+    def delete(id_):
+        """
+        Marks entity with given *id* as deleted.
+        Returns True if successful, False if it was already deleted.
+        """
+        raise NotImplementedError('*delete* method not implemented')
+
+    @staticmethod
+    def undelete(id_):
+        """
+        Marks entity with given *id* as not deleted.
+        Returns True if successful, False if it wasn't deleted.
+        """
+        raise NotImplementedError('*undelete* method not implemented')
+
+
+class WarehouseCRUD(BaseCRUD):
     @staticmethod
     def create(name, location):
         """
@@ -101,11 +146,8 @@ class WarehouseCRUD:
         else:
             return False
 
-                                ##############
-                                #  SUPPLIER  #
-                                ##############
 
-class SupplierCRUD:
+class SupplierCRUD(BaseCRUD):
     @staticmethod
     def create(VATIN, name, location):
         """
@@ -197,12 +239,8 @@ class SupplierCRUD:
         else:
             return False
 
-                                ###############
-                                #  ITEM TYPE  #
-                                ###############
 
-
-class ItemTypeCRUD:
+class ItemTypeCRUD(BaseCRUD):
     @staticmethod
     def create(name, item_model, manufacturer, unit_of_measure):
         """
@@ -295,12 +333,8 @@ class ItemTypeCRUD:
         else:
             return False
 
-                                ################
-                                #  ITEM BATCH  #
-                                ################
 
-
-class ItemBatchCRUD:
+class ItemBatchCRUD(BaseCRUD):
     @staticmethod
     def create(quantity, warehouse_id, supplier_id, item_type_id):
         """
@@ -403,10 +437,6 @@ class ItemBatchCRUD:
             return True
         else:
             return False
-
-                                #############
-                                #  HELPERS  #
-                                #############
 
 
 def db_commit_with_integrity_handling(db_session):
