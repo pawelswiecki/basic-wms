@@ -1,8 +1,11 @@
 # basic-wms
 Basic Warehouse Management System built with Python on Flask
 
+Not production-ready.
+
 ### Current State
-The first version of database model and CRUD methods are finished.
+- v0.2: The second version of database model and CRUD methods are finished. SQLAlchemy models now do not bleed into CRUD API.
+- v0.1: The first version of database model and CRUD methods are finished.
 
 ### The Idea
 
