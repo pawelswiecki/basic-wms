@@ -35,7 +35,6 @@ class BaseCRUD():
         """
         raise NotImplementedError('*get_all* method not implemented')
 
-
     @classmethod
     def update(cls, id_, **kwargs):
         """
@@ -108,10 +107,8 @@ class WarehouseCRUD(BaseCRUD):
         kwargs = locals()
         kwargs.pop("id_")
 
-        entity = cls.SQLA_class.get_one(id_)
-        for key, value in kwargs.items():
-            if value is not None:
-                setattr(entity, key, value)
+        entity = _update_entity(entity=cls.SQLA_class.get_one(id_),
+                                kwargs=kwargs)
         db_model.db.session.add(entity)
         return _db_commit_with_integrity_handling(db_model.db.session)
 
@@ -156,7 +153,6 @@ class SupplierCRUD(BaseCRUD):
         else:
             return None
 
-
     @classmethod
     def get_one(cls, id_):
         """
@@ -186,10 +182,8 @@ class SupplierCRUD(BaseCRUD):
         kwargs = locals()
         kwargs.pop("id_")
 
-        entity = cls.SQLA_class.get_one(id_)
-        for key, value in kwargs.items():
-            if value is not None:
-                setattr(entity, key, value)
+        entity = _update_entity(entity=cls.SQLA_class.get_one(id_),
+                                kwargs=kwargs)
         db_model.db.session.add(entity)
         return _db_commit_with_integrity_handling(db_model.db.session)
 
@@ -265,10 +259,8 @@ class ItemTypeCRUD(BaseCRUD):
         kwargs = locals()
         kwargs.pop("id_")
 
-        entity = cls.SQLA_class.get_one(id_)
-        for key, value in kwargs.items():
-            if value is not None:
-                setattr(entity, key, value)
+        entity = _update_entity(entity=cls.SQLA_class.get_one(id_),
+                                kwargs=kwargs)
         db_model.db.session.add(entity)
         return _db_commit_with_integrity_handling(db_model.db.session)
 
@@ -354,11 +346,8 @@ class ItemBatchCRUD(BaseCRUD):
         for i in ('warehouse', 'supplier', 'item_type'):
             kwargs[i] = locals()[i]
 
-        entity = cls.SQLA_class.get_one(id_)
-        for key, value in kwargs.items():
-            if value is not None:
-                setattr(entity, key, value)
-
+        entity = _update_entity(entity=cls.SQLA_class.get_one(id_),
+                                kwargs=kwargs)
         db_model.db.session.add(entity)
         return _db_commit_with_integrity_handling(db_model.db.session)
 
@@ -391,6 +380,13 @@ def _db_commit_with_integrity_handling(db_session):
         db_session.rollback()
         return False
     return True
+
+
+def _update_entity(entity, kwargs):
+    for key, value in kwargs.items():
+        if value is not None:
+            setattr(entity, key, value)
+    return entity
 
 
 def _get_one(cls, id_):

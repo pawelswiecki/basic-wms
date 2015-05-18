@@ -187,7 +187,7 @@ class ItemTypeSQLA(db.Model, CommonFieldsSQLA):
 class SupplierSQLA(db.Model, CommonFieldsSQLA):
     __tablename__ = 'supplier'
     
-    # VAT identification number (NIP in Poland)
+    # 'VATIN' = 'VAT Identification Number' (NIP in Poland)
     _VATIN = db.Column(db.String(45), nullable=False, unique=True)
     _name = db.Column(db.String(45), nullable=False)
     _location = db.Column(db.String(45), nullable=False)
